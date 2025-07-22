@@ -2,6 +2,85 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Bootstrap Integration */
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  margin-left: 250px;
+  min-height: 100vh;
+  background-color: var(--bs-light, #f8f9fa);
+}
+
+.sidebar {
+  width: 250px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  background-color: var(--bs-dark, #212529);
+  color: white;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+/* Stock status styling */
+.stock-low {
+  border-left: 4px solid #ffc107 !important;
+  background-color: #fff3cd;
+}
+
+.stock-out {
+  border-left: 4px solid #dc3545 !important;  
+  background-color: #f8d7da;
+}
+
+.stock-low tbody tr:hover,
+.stock-out tbody tr:hover {
+  background-color: rgba(0,0,0,0.05);
+}
+
+/* Button styling */
+.btn-action {
+  border: 1px solid #dee2e6;
+  color: #6c757d;
+}
+
+.btn-action:hover {
+  border-color: #007bff;
+  color: #007bff;
+}
+
+/* Dashboard cards */
+.dashboard-card {
+  transition: all 0.3s ease;
+  border: 1px solid #dee2e6;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Sidebar navigation */
+.nav-link {
+  color: rgba(255,255,255,0.8) !important;
+  padding: 0.75rem 1rem;
+  border-radius: 0.375rem;
+  margin: 0.25rem 0;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  background-color: rgba(255,255,255,0.1);
+  color: white !important;
+}
+
+/* Form styling */
+.form-control:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+}
+
 :root {
   --background: hsl(0, 0%, 100%);
   --foreground: hsl(20, 14.3%, 4.1%);

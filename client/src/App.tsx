@@ -3,15 +3,15 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { AuthProvider } from "@/contexts/AuthContext";
-import ProtectedRoute from "@/components/ProtectedRoute";
+import { AuthProvider } from "@/contexts/AuthContext.jsx";
+import ProtectedRoute from "@/components/ProtectedRoute.jsx";
 import NotFound from "@/pages/not-found";
-import Login from "@/pages/Login";
-import AdminDashboard from "@/pages/admin/AdminDashboard";
-import ManageShops from "@/pages/admin/ManageShops";
-import StockManagement from "@/pages/admin/StockManagement";
-import ShopkeeperDashboard from "@/pages/shopkeeper/ShopkeeperDashboard";
-import AddProduct from "@/pages/shopkeeper/AddProduct";
+import Login from "@/pages/Login.jsx";
+import AdminDashboard from "@/pages/admin/AdminDashboard.jsx";
+import ManageShops from "@/pages/admin/ManageShops.jsx";
+import StockManagement from "@/pages/admin/StockManagement.jsx";
+import ShopkeeperDashboard from "@/pages/shopkeeper/ShopkeeperDashboard.jsx";
+import AddProduct from "@/pages/shopkeeper/AddProduct.jsx";
 
 function Router() {
   return (

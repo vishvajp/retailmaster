@@ -192,6 +192,8 @@ export class MemStorage implements IStorage {
     const user: User = {
       ...insertUser,
       id: this.currentIds.users++,
+      phone: insertUser.phone || null,
+      isActive: insertUser.isActive ?? true,
       createdAt: new Date(),
     };
     this.users.set(user.id, user);
@@ -220,6 +222,11 @@ export class MemStorage implements IStorage {
     const shop: Shop = {
       ...insertShop,
       id: this.currentIds.shops++,
+      address: insertShop.address || null,
+      phone: insertShop.phone || null,
+      email: insertShop.email || null,
+      isActive: insertShop.isActive ?? true,
+      ownerId: insertShop.ownerId || null,
       createdAt: new Date(),
     };
     this.shops.set(shop.id, shop);
@@ -256,6 +263,8 @@ export class MemStorage implements IStorage {
     const category: Category = {
       ...insertCategory,
       id: this.currentIds.categories++,
+      description: insertCategory.description || null,
+      isActive: insertCategory.isActive ?? true,
     };
     this.categories.set(category.id, category);
     return category;
@@ -291,6 +300,12 @@ export class MemStorage implements IStorage {
     const product: Product = {
       ...insertProduct,
       id: this.currentIds.products++,
+      description: insertProduct.description || null,
+      brand: insertProduct.brand || null,
+      imageUrl: insertProduct.imageUrl || null,
+      shopId: insertProduct.shopId || null,
+      categoryId: insertProduct.categoryId || null,
+      isActive: insertProduct.isActive ?? true,
       createdAt: new Date(),
     };
     this.products.set(product.id, product);
@@ -343,6 +358,11 @@ export class MemStorage implements IStorage {
     const order: Order = {
       ...insertOrder,
       id: this.currentIds.orders++,
+      status: insertOrder.status || "pending",
+      shopId: insertOrder.shopId || null,
+      customerId: insertOrder.customerId || null,
+      customerPhone: insertOrder.customerPhone || null,
+      notes: insertOrder.notes || null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -384,6 +404,8 @@ export class MemStorage implements IStorage {
     const orderItem: OrderItem = {
       ...insertOrderItem,
       id: this.currentIds.orderItems++,
+      orderId: insertOrderItem.orderId || null,
+      productId: insertOrderItem.productId || null,
     };
     this.orderItems.set(orderItem.id, orderItem);
     return orderItem;
