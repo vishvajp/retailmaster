@@ -1,0 +1,243 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(20, 14.3%, 4.1%);
+  --muted: hsl(60, 4.8%, 95.9%);
+  --muted-foreground: hsl(25, 5.3%, 44.7%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(20, 14.3%, 4.1%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(20, 14.3%, 4.1%);
+  --border: hsl(20, 5.9%, 90%);
+  --input: hsl(20, 5.9%, 90%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(60, 4.8%, 95.9%);
+  --secondary-foreground: hsl(24, 9.8%, 10%);
+  --accent: hsl(60, 4.8%, 95.9%);
+  --accent-foreground: hsl(24, 9.8%, 10%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(20, 14.3%, 4.1%);
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: hsl(60, 4.8%, 95.9%);
+  }
+}
+
+/* Bootstrap integration styles */
+.sidebar {
+  min-height: 100vh;
+  background: linear-gradient(135deg, hsl(260, 86%, 72%) 0%, hsl(264, 46%, 48%) 100%);
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 250px;
+  z-index: 1000;
+  transition: all 0.3s;
+}
+
+.sidebar .nav-link {
+  color: hsla(0, 0%, 100%, 0.8);
+  padding: 12px 20px;
+  border-radius: 8px;
+  margin: 4px 16px;
+  transition: all 0.3s;
+  border: none;
+  background: none;
+}
+
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active {
+  color: hsl(0, 0%, 100%);
+  background-color: hsla(0, 0%, 100%, 0.1);
+  transform: translateX(5px);
+}
+
+.main-content {
+  margin-left: 250px;
+  padding: 20px;
+  transition: all 0.3s;
+}
+
+.card {
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px hsla(0, 0%, 0%, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px hsla(0, 0%, 0%, 0.15);
+}
+
+.stats-card {
+  background: linear-gradient(135deg, hsl(260, 86%, 72%) 0%, hsl(264, 46%, 48%) 100%);
+  color: hsl(0, 0%, 100%);
+}
+
+.stats-card-success {
+  background: linear-gradient(135deg, hsl(172, 85%, 33%) 0%, hsl(130, 88%, 59%) 100%);
+}
+
+.stats-card-warning {
+  background: linear-gradient(135deg, hsl(25, 95%, 53%) 0%, hsl(0, 99%, 54%) 100%);
+}
+
+.stats-card-info {
+  background: linear-gradient(135deg, hsl(260, 86%, 72%) 0%, hsl(264, 46%, 48%) 100%);
+}
+
+.table-responsive {
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.btn-action {
+  padding: 5px 10px;
+  font-size: 0.875rem;
+  border-radius: 8px;
+}
+
+.stock-low {
+  background-color: hsl(45, 100%, 88%);
+  border-left: 4px solid hsl(45, 100%, 51%);
+}
+
+.stock-out {
+  background-color: hsl(354, 70%, 87%);
+  border-left: 4px solid hsl(348, 83%, 47%);
+}
+
+.login-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, hsl(260, 86%, 72%) 0%, hsl(264, 46%, 48%) 100%);
+}
+
+.login-card {
+  backdrop-filter: blur(10px);
+  background: hsla(0, 0%, 100%, 0.95);
+  border-radius: 20px;
+  box-shadow: 0 20px 40px hsla(0, 0%, 0%, 0.1);
+}
+
+.chart-container {
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: hsl(60, 4.8%, 95.9%);
+  border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    margin-left: -250px;
+  }
+  
+  .sidebar.show {
+    margin-left: 0;
+  }
+  
+  .main-content {
+    margin-left: 0;
+  }
+}
+
+.navbar-toggler {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .navbar-toggler {
+    display: block;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1001;
+    background: hsl(0, 0%, 100%);
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px hsla(0, 0%, 0%, 0.1);
+  }
+}
+
+/* Bootstrap components integration */
+.form-control,
+.form-select {
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.btn-primary:hover {
+  background-color: hsl(207, 90%, 48%);
+  border-color: hsl(207, 90%, 48%);
+}
+
+.badge {
+  border-radius: var(--radius);
+}
+
+.input-group-text {
+  background-color: var(--muted);
+  border-color: var(--border);
+  color: var(--muted-foreground);
+}
+
+.table {
+  color: var(--foreground);
+}
+
+.table-light {
+  background-color: var(--muted);
+  color: var(--foreground);
+}
+
+.modal-content {
+  border-radius: 15px;
+  border: none;
+  box-shadow: 0 10px 30px hsla(0, 0%, 0%, 0.2);
+}
