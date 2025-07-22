@@ -1,0 +1,91 @@
+Create a full-stack application for managing multiple types of shops (dairy, meat, grocery) with the following tech stack:
+
+📌 Frontend:
+- React.js with React Router
+- Bootstrap for layout and styling
+
+📌 Backend:
+- Node.js with Express.js
+- MongoDB (or use mock JSON data if DB not set up)
+- JWT for authentication
+
+📌 Key Roles:
+1. Admin
+2. Shopkeeper (based on shop type)
+
+🔐 Authentication:
+- Login system for Admin and Shopkeepers
+- Role-based routing and access control (Admin has full access, Shopkeepers only see their shop data)
+
+📊 Dashboards:
+- Admin Dashboard:
+  - View overall profit/sales
+  - View all shops’ data
+  - Generate reports
+- Shopkeeper Dashboard:
+  - View daily profit
+  - Track orders
+  - Stock management
+
+📁 Admin Sidebar:
+- Dashboard
+- Manage Shops (Add/Edit/Delete)
+- All Products (view and manage)
+- Category Management
+- Stock Management
+- Orders
+- User Management
+- Sales Reports
+- Settings
+
+🛍️ Shopkeeper Sidebar:
+- Dashboard
+- My Products (CRUD)
+- Add New Product
+- Category Management
+- Stock Management
+- Orders
+- Sales Summary
+- Settings
+
+📦 Product Features:
+- Add/Edit/Delete products
+- Category (dairy, meat, grocery)
+- Product image upload
+- Quantity, Price
+- Status (In Stock, Out of Stock)
+
+📈 Stock Management:
+- Show low-stock products
+- Alerts or highlights for out-of-stock items
+- Ability to update stock quantity
+
+🧾 Order Management:
+- View new, completed, and cancelled orders
+- Filter orders by date/shop/status
+
+📑 Reports:
+- Admin can view and export sales reports (daily, weekly, monthly)
+- Shopkeepers can view their own report
+
+🧱 Folder Structure:
+
+client/
+- React app with routing
+- Components: Sidebar, Dashboard, ProductForm, etc.
+- Pages: Login, AdminDashboard, ShopDashboard, ProductList, OrderList, etc.
+
+server/
+- Express app
+- Routes: /auth, /admin, /shop, /products, /orders
+- Models: User, Product, Order, Shop
+- Middleware: auth (JWT-based)
+
+🚀 Additional Requirements:
+- Responsive UI (mobile-friendly)
+- Use React Context or Redux for state (auth, role, user data)
+- Protected routes using roles
+- Reusable components for forms and lists
+
+🎯 Goal:
+Build a production-ready shop management system with role-based access and complete shopkeeping functionality including stock, order, and product management.
