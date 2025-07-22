@@ -2,9 +2,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Redirect } from "wouter";
 
 export default function ProtectedRoute({ children, requiredRole }) {
-  const { user, loading } = useAuth();
+  const { user, isLoading } = useAuth();
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="d-flex justify-content-center align-items-center min-vh-100">
         <div className="spinner-border text-primary" role="status">

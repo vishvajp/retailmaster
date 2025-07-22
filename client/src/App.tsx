@@ -7,55 +7,108 @@ import { AuthProvider } from "@/contexts/AuthContext.jsx";
 import ProtectedRoute from "@/components/ProtectedRoute.jsx";
 import NotFound from "@/pages/not-found";
 import Login from "@/pages/Login.jsx";
+
+// Admin pages
 import AdminDashboard from "@/pages/admin/AdminDashboard.jsx";
 import ManageShops from "@/pages/admin/ManageShops.jsx";
 import StockManagement from "@/pages/admin/StockManagement.jsx";
+import Orders from "@/pages/admin/Orders.jsx";
+import UserManagement from "@/pages/admin/UserManagement.jsx";
+import Reports from "@/pages/admin/Reports.jsx";
+
+// Shopkeeper pages
 import ShopkeeperDashboard from "@/pages/shopkeeper/ShopkeeperDashboard.jsx";
+import Products from "@/pages/shopkeeper/Products.jsx";
 import AddProduct from "@/pages/shopkeeper/AddProduct.jsx";
+import ShopkeeperOrders from "@/pages/shopkeeper/Orders.jsx";
+import StockAlerts from "@/pages/shopkeeper/StockAlerts.jsx";
+import ShopkeeperReports from "@/pages/shopkeeper/Reports.jsx";
 
 function Router() {
   return (
     <Switch>
       {/* Public routes */}
-      <Route path="/login" component={Login} />
+      <Route path="/login">
+        <Login />
+      </Route>
       
       {/* Admin routes */}
-      <Route path="/admin">
-        <ProtectedRoute requireRole="admin">
+      <Route path="/admin/dashboard">
+        <ProtectedRoute requiredRole="admin">
           <AdminDashboard />
         </ProtectedRoute>
       </Route>
       
       <Route path="/admin/shops">
-        <ProtectedRoute requireRole="admin">
+        <ProtectedRoute requiredRole="admin">
           <ManageShops />
         </ProtectedRoute>
       </Route>
       
       <Route path="/admin/stock">
-        <ProtectedRoute requireRole="admin">
+        <ProtectedRoute requiredRole="admin">
           <StockManagement />
         </ProtectedRoute>
       </Route>
       
+      <Route path="/admin/orders">
+        <ProtectedRoute requiredRole="admin">
+          <Orders />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/admin/users">
+        <ProtectedRoute requiredRole="admin">
+          <UserManagement />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/admin/reports">
+        <ProtectedRoute requiredRole="admin">
+          <Reports />
+        </ProtectedRoute>
+      </Route>
+      
       {/* Shopkeeper routes */}
-      <Route path="/shopkeeper">
-        <ProtectedRoute requireRole="shopkeeper">
+      <Route path="/shopkeeper/dashboard">
+        <ProtectedRoute requiredRole="shopkeeper">
           <ShopkeeperDashboard />
         </ProtectedRoute>
       </Route>
       
+      <Route path="/shopkeeper/products">
+        <ProtectedRoute requiredRole="shopkeeper">
+          <Products />
+        </ProtectedRoute>
+      </Route>
+      
       <Route path="/shopkeeper/add-product">
-        <ProtectedRoute requireRole="shopkeeper">
+        <ProtectedRoute requiredRole="shopkeeper">
           <AddProduct />
         </ProtectedRoute>
       </Route>
       
-      {/* Default route - redirect to login */}
-      <Route path="/">
-        <ProtectedRoute>
-          <div></div>
+      <Route path="/shopkeeper/orders">
+        <ProtectedRoute requiredRole="shopkeeper">
+          <ShopkeeperOrders />
         </ProtectedRoute>
+      </Route>
+      
+      <Route path="/shopkeeper/stock">
+        <ProtectedRoute requiredRole="shopkeeper">
+          <StockAlerts />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/shopkeeper/reports">
+        <ProtectedRoute requiredRole="shopkeeper">
+          <ShopkeeperReports />
+        </ProtectedRoute>
+      </Route>
+      
+      {/* Default route - redirect based on role */}
+      <Route path="/">
+        <Login />
       </Route>
       
       {/* Fallback to 404 */}
