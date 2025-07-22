@@ -1,74 +1,8 @@
 import { 
-  users, shops, categories, products, orders, orderItems,
-  type User, type InsertUser, type Shop, type InsertShop,
-  type Category, type InsertCategory, type Product, type InsertProduct,
-  type Order, type InsertOrder, type OrderItem, type InsertOrderItem
+  users, shops, categories, products, orders, orderItems
 } from "@shared/schema";
 
-export interface IStorage {
-  // User operations
-  getUser(id: number): Promise<User | undefined>;
-  getUserByEmail(email: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
-  updateUser(id: number, user: Partial<InsertUser>): Promise<User | undefined>;
-  getAllUsers(): Promise<User[]>;
-
-  // Shop operations
-  getShop(id: number): Promise<Shop | undefined>;
-  createShop(shop: InsertShop): Promise<Shop>;
-  updateShop(id: number, shop: Partial<InsertShop>): Promise<Shop | undefined>;
-  deleteShop(id: number): Promise<boolean>;
-  getAllShops(): Promise<Shop[]>;
-  getShopsByOwner(ownerId: number): Promise<Shop[]>;
-
-  // Category operations
-  getCategory(id: number): Promise<Category | undefined>;
-  createCategory(category: InsertCategory): Promise<Category>;
-  updateCategory(id: number, category: Partial<InsertCategory>): Promise<Category | undefined>;
-  deleteCategory(id: number): Promise<boolean>;
-  getAllCategories(): Promise<Category[]>;
-  getCategoriesByShopType(shopType: string): Promise<Category[]>;
-
-  // Product operations
-  getProduct(id: number): Promise<Product | undefined>;
-  createProduct(product: InsertProduct): Promise<Product>;
-  updateProduct(id: number, product: Partial<InsertProduct>): Promise<Product | undefined>;
-  deleteProduct(id: number): Promise<boolean>;
-  getAllProducts(): Promise<Product[]>;
-  getProductsByShop(shopId: number): Promise<Product[]>;
-  getLowStockProducts(shopId?: number): Promise<Product[]>;
-  getOutOfStockProducts(shopId?: number): Promise<Product[]>;
-
-  // Order operations
-  getOrder(id: number): Promise<Order | undefined>;
-  createOrder(order: InsertOrder): Promise<Order>;
-  updateOrder(id: number, order: Partial<InsertOrder>): Promise<Order | undefined>;
-  deleteOrder(id: number): Promise<boolean>;
-  getAllOrders(): Promise<Order[]>;
-  getOrdersByShop(shopId: number): Promise<Order[]>;
-  getOrdersByStatus(status: string, shopId?: number): Promise<Order[]>;
-
-  // Order item operations
-  createOrderItem(orderItem: InsertOrderItem): Promise<OrderItem>;
-  getOrderItems(orderId: number): Promise<OrderItem[]>;
-}
-
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private shops: Map<number, Shop>;
-  private categories: Map<number, Category>;
-  private products: Map<number, Product>;
-  private orders: Map<number, Order>;
-  private orderItems: Map<number, OrderItem>;
-  private currentIds: {
-    users: number;
-    shops: number;
-    categories: number;
-    products: number;
-    orders: number;
-    orderItems: number;
-  };
-
+export class MemStorage {
   constructor() {
     this.users = new Map();
     this.shops = new Map();
@@ -77,21 +11,21 @@ export class MemStorage implements IStorage {
     this.orders = new Map();
     this.orderItems = new Map();
     this.currentIds = {
-      users: 1,
-      shops: 1,
-      categories: 1,
-      products: 1,
-      orders: 1,
-      orderItems: 1,
+      users: 0,
+      shops: 0,
+      categories: 0,
+      products: 0,
+      orders: 0,
+      orderItems: 0,
     };
 
-    // Initialize with sample data
-    this.initializeData();
+    // Initialize with demo data
+    this.initializeDemoData();
   }
 
-  private initializeData() {
+  initializeDemoData() {
     // Create admin user
-    const admin: User = {
+    const admin = {
       id: this.currentIds.users++,
       username: "admin",
       email: "admin@shopmanager.com",
@@ -105,7 +39,7 @@ export class MemStorage implements IStorage {
     this.users.set(admin.id, admin);
 
     // Create shopkeeper users
-    const shopkeeper1: User = {
+    const shopkeeper1 = {
       id: this.currentIds.users++,
       username: "shopkeeper1",
       email: "shop@dairy.com",
@@ -119,7 +53,7 @@ export class MemStorage implements IStorage {
     this.users.set(shopkeeper1.id, shopkeeper1);
 
     // Create shops
-    const dairyShop: Shop = {
+    const dairyShop = {
       id: this.currentIds.shops++,
       name: "Fresh Dairy Shop",
       type: "dairy",
@@ -133,7 +67,7 @@ export class MemStorage implements IStorage {
     this.shops.set(dairyShop.id, dairyShop);
 
     // Create categories
-    const dairyCategory: Category = {
+    const dairyCategory = {
       id: this.currentIds.categories++,
       name: "Dairy Products",
       shopType: "dairy",
@@ -143,7 +77,7 @@ export class MemStorage implements IStorage {
     this.categories.set(dairyCategory.id, dairyCategory);
 
     // Create sample products
-    const milk: Product = {
+    const milk = {
       id: this.currentIds.products++,
       name: "Fresh Milk 1L",
       sku: "MILK001",
@@ -162,7 +96,7 @@ export class MemStorage implements IStorage {
     this.products.set(milk.id, milk);
 
     // Create sample orders
-    const order1: Order = {
+    const order1 = {
       id: this.currentIds.orders++,
       orderNumber: "ORD-001",
       customerId: null,
@@ -180,16 +114,16 @@ export class MemStorage implements IStorage {
   }
 
   // User operations
-  async getUser(id: number): Promise<User | undefined> {
+  async getUser(id) {
     return this.users.get(id);
   }
 
-  async getUserByEmail(email: string): Promise<User | undefined> {
+  async getUserByEmail(email) {
     return Array.from(this.users.values()).find(user => user.email === email);
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const user: User = {
+  async createUser(insertUser) {
+    const user = {
       ...insertUser,
       id: this.currentIds.users++,
       phone: insertUser.phone || null,
@@ -200,7 +134,7 @@ export class MemStorage implements IStorage {
     return user;
   }
 
-  async updateUser(id: number, userData: Partial<InsertUser>): Promise<User | undefined> {
+  async updateUser(id, userData) {
     const user = this.users.get(id);
     if (!user) return undefined;
     
@@ -209,31 +143,27 @@ export class MemStorage implements IStorage {
     return updatedUser;
   }
 
-  async getAllUsers(): Promise<User[]> {
+  async getAllUsers() {
     return Array.from(this.users.values());
   }
 
   // Shop operations
-  async getShop(id: number): Promise<Shop | undefined> {
+  async getShop(id) {
     return this.shops.get(id);
   }
 
-  async createShop(insertShop: InsertShop): Promise<Shop> {
-    const shop: Shop = {
+  async createShop(insertShop) {
+    const shop = {
       ...insertShop,
       id: this.currentIds.shops++,
-      address: insertShop.address || null,
-      phone: insertShop.phone || null,
-      email: insertShop.email || null,
       isActive: insertShop.isActive ?? true,
-      ownerId: insertShop.ownerId || null,
       createdAt: new Date(),
     };
     this.shops.set(shop.id, shop);
     return shop;
   }
 
-  async updateShop(id: number, shopData: Partial<InsertShop>): Promise<Shop | undefined> {
+  async updateShop(id, shopData) {
     const shop = this.shops.get(id);
     if (!shop) return undefined;
     
@@ -242,35 +172,34 @@ export class MemStorage implements IStorage {
     return updatedShop;
   }
 
-  async deleteShop(id: number): Promise<boolean> {
+  async deleteShop(id) {
     return this.shops.delete(id);
   }
 
-  async getAllShops(): Promise<Shop[]> {
+  async getAllShops() {
     return Array.from(this.shops.values());
   }
 
-  async getShopsByOwner(ownerId: number): Promise<Shop[]> {
+  async getShopsByOwner(ownerId) {
     return Array.from(this.shops.values()).filter(shop => shop.ownerId === ownerId);
   }
 
   // Category operations
-  async getCategory(id: number): Promise<Category | undefined> {
+  async getCategory(id) {
     return this.categories.get(id);
   }
 
-  async createCategory(insertCategory: InsertCategory): Promise<Category> {
-    const category: Category = {
+  async createCategory(insertCategory) {
+    const category = {
       ...insertCategory,
       id: this.currentIds.categories++,
-      description: insertCategory.description || null,
       isActive: insertCategory.isActive ?? true,
     };
     this.categories.set(category.id, category);
     return category;
   }
 
-  async updateCategory(id: number, categoryData: Partial<InsertCategory>): Promise<Category | undefined> {
+  async updateCategory(id, categoryData) {
     const category = this.categories.get(id);
     if (!category) return undefined;
     
@@ -279,32 +208,27 @@ export class MemStorage implements IStorage {
     return updatedCategory;
   }
 
-  async deleteCategory(id: number): Promise<boolean> {
+  async deleteCategory(id) {
     return this.categories.delete(id);
   }
 
-  async getAllCategories(): Promise<Category[]> {
+  async getAllCategories() {
     return Array.from(this.categories.values());
   }
 
-  async getCategoriesByShopType(shopType: string): Promise<Category[]> {
-    return Array.from(this.categories.values()).filter(cat => cat.shopType === shopType);
+  async getCategoriesByShopType(shopType) {
+    return Array.from(this.categories.values()).filter(category => category.shopType === shopType);
   }
 
   // Product operations
-  async getProduct(id: number): Promise<Product | undefined> {
+  async getProduct(id) {
     return this.products.get(id);
   }
 
-  async createProduct(insertProduct: InsertProduct): Promise<Product> {
-    const product: Product = {
+  async createProduct(insertProduct) {
+    const product = {
       ...insertProduct,
       id: this.currentIds.products++,
-      description: insertProduct.description || null,
-      brand: insertProduct.brand || null,
-      imageUrl: insertProduct.imageUrl || null,
-      shopId: insertProduct.shopId || null,
-      categoryId: insertProduct.categoryId || null,
       isActive: insertProduct.isActive ?? true,
       createdAt: new Date(),
     };
@@ -312,7 +236,7 @@ export class MemStorage implements IStorage {
     return product;
   }
 
-  async updateProduct(id: number, productData: Partial<InsertProduct>): Promise<Product | undefined> {
+  async updateProduct(id, productData) {
     const product = this.products.get(id);
     if (!product) return undefined;
     
@@ -321,19 +245,19 @@ export class MemStorage implements IStorage {
     return updatedProduct;
   }
 
-  async deleteProduct(id: number): Promise<boolean> {
+  async deleteProduct(id) {
     return this.products.delete(id);
   }
 
-  async getAllProducts(): Promise<Product[]> {
+  async getAllProducts() {
     return Array.from(this.products.values());
   }
 
-  async getProductsByShop(shopId: number): Promise<Product[]> {
+  async getProductsByShop(shopId) {
     return Array.from(this.products.values()).filter(product => product.shopId === shopId);
   }
 
-  async getLowStockProducts(shopId?: number): Promise<Product[]> {
+  async getLowStockProducts(shopId) {
     let products = Array.from(this.products.values());
     if (shopId) {
       products = products.filter(product => product.shopId === shopId);
@@ -341,7 +265,7 @@ export class MemStorage implements IStorage {
     return products.filter(product => product.stock <= product.minStock && product.stock > 0);
   }
 
-  async getOutOfStockProducts(shopId?: number): Promise<Product[]> {
+  async getOutOfStockProducts(shopId) {
     let products = Array.from(this.products.values());
     if (shopId) {
       products = products.filter(product => product.shopId === shopId);
@@ -350,19 +274,14 @@ export class MemStorage implements IStorage {
   }
 
   // Order operations
-  async getOrder(id: number): Promise<Order | undefined> {
+  async getOrder(id) {
     return this.orders.get(id);
   }
 
-  async createOrder(insertOrder: InsertOrder): Promise<Order> {
-    const order: Order = {
+  async createOrder(insertOrder) {
+    const order = {
       ...insertOrder,
       id: this.currentIds.orders++,
-      status: insertOrder.status || "pending",
-      shopId: insertOrder.shopId || null,
-      customerId: insertOrder.customerId || null,
-      customerPhone: insertOrder.customerPhone || null,
-      notes: insertOrder.notes || null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -370,7 +289,7 @@ export class MemStorage implements IStorage {
     return order;
   }
 
-  async updateOrder(id: number, orderData: Partial<InsertOrder>): Promise<Order | undefined> {
+  async updateOrder(id, orderData) {
     const order = this.orders.get(id);
     if (!order) return undefined;
     
@@ -379,19 +298,19 @@ export class MemStorage implements IStorage {
     return updatedOrder;
   }
 
-  async deleteOrder(id: number): Promise<boolean> {
+  async deleteOrder(id) {
     return this.orders.delete(id);
   }
 
-  async getAllOrders(): Promise<Order[]> {
+  async getAllOrders() {
     return Array.from(this.orders.values());
   }
 
-  async getOrdersByShop(shopId: number): Promise<Order[]> {
+  async getOrdersByShop(shopId) {
     return Array.from(this.orders.values()).filter(order => order.shopId === shopId);
   }
 
-  async getOrdersByStatus(status: string, shopId?: number): Promise<Order[]> {
+  async getOrdersByStatus(status, shopId) {
     let orders = Array.from(this.orders.values()).filter(order => order.status === status);
     if (shopId) {
       orders = orders.filter(order => order.shopId === shopId);
@@ -400,18 +319,16 @@ export class MemStorage implements IStorage {
   }
 
   // Order item operations
-  async createOrderItem(insertOrderItem: InsertOrderItem): Promise<OrderItem> {
-    const orderItem: OrderItem = {
+  async createOrderItem(insertOrderItem) {
+    const orderItem = {
       ...insertOrderItem,
       id: this.currentIds.orderItems++,
-      orderId: insertOrderItem.orderId || null,
-      productId: insertOrderItem.productId || null,
     };
     this.orderItems.set(orderItem.id, orderItem);
     return orderItem;
   }
 
-  async getOrderItems(orderId: number): Promise<OrderItem[]> {
+  async getOrderItems(orderId) {
     return Array.from(this.orderItems.values()).filter(item => item.orderId === orderId);
   }
 }

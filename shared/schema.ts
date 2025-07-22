@@ -2,6 +2,7 @@ import { pgTable, text, serial, integer, boolean, timestamp, decimal } from "dri
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+// Remove TypeScript-specific type exports and keep only runtime schemas
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
@@ -105,24 +106,7 @@ export const insertOrderItemSchema = createInsertSchema(orderItems).omit({
   id: true,
 });
 
-// Types
-export type User = typeof users.$inferSelect;
-export type InsertUser = z.infer<typeof insertUserSchema>;
-
-export type Shop = typeof shops.$inferSelect;
-export type InsertShop = z.infer<typeof insertShopSchema>;
-
-export type Category = typeof categories.$inferSelect;
-export type InsertCategory = z.infer<typeof insertCategorySchema>;
-
-export type Product = typeof products.$inferSelect;
-export type InsertProduct = z.infer<typeof insertProductSchema>;
-
-export type Order = typeof orders.$inferSelect;
-export type InsertOrder = z.infer<typeof insertOrderSchema>;
-
-export type OrderItem = typeof orderItems.$inferSelect;
-export type InsertOrderItem = z.infer<typeof insertOrderItemSchema>;
+// Type definitions - Keep for runtime schemas only (remove TypeScript types)
 
 // Login schema
 export const loginSchema = z.object({
@@ -130,4 +114,4 @@ export const loginSchema = z.object({
   password: z.string().min(1),
 });
 
-export type LoginCredentials = z.infer<typeof loginSchema>;
+// LoginCredentials type removed - use runtime validation only

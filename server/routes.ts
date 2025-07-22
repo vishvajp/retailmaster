@@ -1,5 +1,4 @@
-import type { Express } from "express";
-import { createServer, type Server } from "http";
+import { createServer } from "http";
 import jwt from "jsonwebtoken";
 import { storage } from "./storage";
 import { loginSchema, insertUserSchema, insertShopSchema, insertProductSchema, insertOrderSchema } from "@shared/schema";
@@ -7,7 +6,7 @@ import { loginSchema, insertUserSchema, insertShopSchema, insertProductSchema, i
 const JWT_SECRET = process.env.JWT_SECRET || "shop-management-secret-key";
 
 // Middleware to verify JWT token
-const authenticateToken = async (req: any, res: any, next: any) => {
+const authenticateToken = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
 
@@ -16,7 +15,7 @@ const authenticateToken = async (req: any, res: any, next: any) => {
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    const decoded = jwt.verify(token, JWT_SECRET);
     const user = await storage.getUser(decoded.userId);
     if (!user) {
       return res.status(401).json({ message: 'Invalid token' });
@@ -29,7 +28,7 @@ const authenticateToken = async (req: any, res: any, next: any) => {
 };
 
 // Middleware to check admin role
-const requireAdmin = (req: any, res: any, next: any) => {
+const requireAdmin = (req, res, next) => {
   if (req.user.role !== 'admin') {
     return res.status(403).json({ message: 'Admin access required' });
   }
@@ -37,7 +36,7 @@ const requireAdmin = (req: any, res: any, next: any) => {
 };
 
 // Middleware to check shopkeeper role or ownership
-const requireShopkeeperOrOwner = async (req: any, res: any, next: any) => {
+const requireShopkeeperOrOwner = async (req, res, next) => {
   if (req.user.role === 'admin') {
     return next(); // Admin can access everything
   }
@@ -57,7 +56,7 @@ const requireShopkeeperOrOwner = async (req: any, res: any, next: any) => {
   return res.status(403).json({ message: 'Access denied' });
 };
 
-export async function registerRoutes(app: Express): Promise<Server> {
+export async function registerRoutes(app) {
   // Authentication routes
   app.post("/api/auth/login", async (req, res) => {
     try {
