@@ -1,7 +1,7 @@
 import { createServer } from "http";
 import jwt from "jsonwebtoken";
-import { storage } from "./storage";
-import { loginSchema, insertUserSchema, insertShopSchema, insertProductSchema, insertOrderSchema } from "@shared/schema";
+import { storage } from "./storage.js";
+import { loginSchema, insertUserSchema, insertShopSchema, insertProductSchema, insertOrderSchema } from "../shared/schema.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "shop-management-secret-key";
 
@@ -87,7 +87,7 @@ export async function registerRoutes(app) {
     }
   });
 
-  app.get("/api/auth/me", authenticateToken, async (req: any, res) => {
+  app.get("/api/auth/me", authenticateToken, async (req, res) => {
     res.json({
       id: req.user.id,
       email: req.user.email,
@@ -119,7 +119,7 @@ export async function registerRoutes(app) {
   });
 
   // Shop management routes
-  app.get("/api/shops", authenticateToken, async (req: any, res) => {
+  app.get("/api/shops", authenticateToken, async (req, res) => {
     try {
       let shops;
       if (req.user.role === 'admin') {
@@ -181,7 +181,7 @@ export async function registerRoutes(app) {
   });
 
   // Product management routes
-  app.get("/api/products", authenticateToken, async (req: any, res) => {
+  app.get("/api/products", authenticateToken, async (req, res) => {
     try {
       let products;
       if (req.user.role === 'admin') {
@@ -211,13 +211,13 @@ export async function registerRoutes(app) {
     }
   });
 
-  app.post("/api/products", authenticateToken, async (req: any, res) => {
+  app.post("/api/products", authenticateToken, async (req, res) => {
     try {
       const productData = insertProductSchema.parse(req.body);
       
       // Check if shopkeeper owns the shop
       if (req.user.role === 'shopkeeper') {
-        const shop = await storage.getShop(productData.shopId!);
+        const shop = await storage.getShop(productData.shopId);
         if (!shop || shop.ownerId !== req.user.id) {
           return res.status(403).json({ message: "Access denied" });
         }
@@ -230,7 +230,7 @@ export async function registerRoutes(app) {
     }
   });
 
-  app.put("/api/products/:id", authenticateToken, async (req: any, res) => {
+  app.put("/api/products/:id", authenticateToken, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const productData = insertProductSchema.partial().parse(req.body);
@@ -241,7 +241,7 @@ export async function registerRoutes(app) {
         if (!existingProduct) {
           return res.status(404).json({ message: "Product not found" });
         }
-        const shop = await storage.getShop(existingProduct.shopId!);
+        const shop = await storage.getShop(existingProduct.shopId);
         if (!shop || shop.ownerId !== req.user.id) {
           return res.status(403).json({ message: "Access denied" });
         }
@@ -257,7 +257,7 @@ export async function registerRoutes(app) {
     }
   });
 
-  app.delete("/api/products/:id", authenticateToken, async (req: any, res) => {
+  app.delete("/api/products/:id", authenticateToken, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       
@@ -267,7 +267,7 @@ export async function registerRoutes(app) {
         if (!existingProduct) {
           return res.status(404).json({ message: "Product not found" });
         }
-        const shop = await storage.getShop(existingProduct.shopId!);
+        const shop = await storage.getShop(existingProduct.shopId);
         if (!shop || shop.ownerId !== req.user.id) {
           return res.status(403).json({ message: "Access denied" });
         }
@@ -284,7 +284,7 @@ export async function registerRoutes(app) {
   });
 
   // Stock management routes
-  app.get("/api/stock/low", authenticateToken, async (req: any, res) => {
+  app.get("/api/stock/low", authenticateToken, async (req, res) => {
     try {
       let products;
       if (req.user.role === 'admin') {
@@ -303,7 +303,7 @@ export async function registerRoutes(app) {
     }
   });
 
-  app.get("/api/stock/out", authenticateToken, async (req: any, res) => {
+  app.get("/api/stock/out", authenticateToken, async (req, res) => {
     try {
       let products;
       if (req.user.role === 'admin') {
@@ -323,7 +323,7 @@ export async function registerRoutes(app) {
   });
 
   // Order management routes
-  app.get("/api/orders", authenticateToken, async (req: any, res) => {
+  app.get("/api/orders", authenticateToken, async (req, res) => {
     try {
       let orders;
       if (req.user.role === 'admin') {
@@ -352,13 +352,13 @@ export async function registerRoutes(app) {
     }
   });
 
-  app.post("/api/orders", authenticateToken, async (req: any, res) => {
+  app.post("/api/orders", authenticateToken, async (req, res) => {
     try {
       const orderData = insertOrderSchema.parse(req.body);
       
       // Check if shopkeeper owns the shop
       if (req.user.role === 'shopkeeper') {
-        const shop = await storage.getShop(orderData.shopId!);
+        const shop = await storage.getShop(orderData.shopId);
         if (!shop || shop.ownerId !== req.user.id) {
           return res.status(403).json({ message: "Access denied" });
         }
@@ -371,7 +371,7 @@ export async function registerRoutes(app) {
     }
   });
 
-  app.put("/api/orders/:id", authenticateToken, async (req: any, res) => {
+  app.put("/api/orders/:id", authenticateToken, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const orderData = insertOrderSchema.partial().parse(req.body);
@@ -382,7 +382,7 @@ export async function registerRoutes(app) {
         if (!existingOrder) {
           return res.status(404).json({ message: "Order not found" });
         }
-        const shop = await storage.getShop(existingOrder.shopId!);
+        const shop = await storage.getShop(existingOrder.shopId);
         if (!shop || shop.ownerId !== req.user.id) {
           return res.status(403).json({ message: "Access denied" });
         }
@@ -399,7 +399,7 @@ export async function registerRoutes(app) {
   });
 
   // Dashboard statistics
-  app.get("/api/dashboard/stats", authenticateToken, async (req: any, res) => {
+  app.get("/api/dashboard/stats", authenticateToken, async (req, res) => {
     try {
       if (req.user.role === 'admin') {
         const shops = await storage.getAllShops();

@@ -1,26 +1,46 @@
 import { useAuth } from "@/contexts/AuthContext";
-import { Redirect } from "wouter";
+import { useLocation } from "wouter";
+import { useEffect } from "react";
 
-export default function ProtectedRoute({ children, requiredRole }) {
+export default function ProtectedRoute({ children, requireRole }) {
   const { user, isLoading } = useAuth();
+  const [, setLocation] = useLocation();
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (!user) {
+        setLocation("/login");
+        return;
+      }
+
+      if (requireRole && user.role !== requireRole) {
+        // Redirect based on user role
+        if (user.role === "admin") {
+          setLocation("/admin");
+        } else {
+          setLocation("/shopkeeper");
+        }
+        return;
+      }
+    }
+  }, [user, isLoading, requireRole, setLocation]);
 
   if (isLoading) {
     return (
-      <div className="d-flex justify-content-center align-items-center min-vh-100">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+          <p className="mt-2">Loading...</p>
         </div>
       </div>
     );
   }
 
-  if (!user) {
-    return <Redirect to="/login" />;
+  if (!user || (requireRole && user.role !== requireRole)) {
+    return null;
   }
 
-  if (requiredRole && user.role !== requiredRole) {
-    return <Redirect to="/login" />;
-  }
-
-  return children;
+  return <>{children}</>;
 }

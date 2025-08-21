@@ -42,15 +42,9 @@ export function AuthProvider({ children }) {
       });
       const data = await response.json();
       
-      if (data.token && data.user) {
-        localStorage.setItem("token", data.token);
-        setUser(data.user);
-        return data;
-      } else {
-        throw new Error("Invalid response format");
-      }
+      localStorage.setItem("token", data.token);
+      setUser(data.user);
     } catch (error) {
-      console.error("Login error:", error);
       throw new Error("Invalid credentials");
     }
   };

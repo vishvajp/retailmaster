@@ -1,6 +1,6 @@
 import { 
   users, shops, categories, products, orders, orderItems
-} from "@shared/schema";
+} from "../shared/schema.js";
 
 export class MemStorage {
   constructor() {
