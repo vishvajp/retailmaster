@@ -37,9 +37,9 @@ export default function Login() {
       
       // Redirect based on role
       if (role === "admin") {
-        setLocation("/admin");
+        setLocation("/admin/dashboard");
       } else {
-        setLocation("/shopkeeper");
+        setLocation("/shopkeeper/dashboard");
       }
     } catch (error) {
       toast({
