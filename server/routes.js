@@ -401,21 +401,49 @@ export async function registerRoutes(app) {
   // Dashboard statistics
   app.get("/api/dashboard/stats", authenticateToken, async (req, res) => {
     try {
+      const shopId = req.query.shopId;
+      
       if (req.user.role === 'admin') {
-        const shops = await storage.getAllShops();
-        const products = await storage.getAllProducts();
-        const orders = await storage.getAllOrders();
-        const lowStockProducts = await storage.getLowStockProducts();
-        
-        const totalRevenue = orders.reduce((sum, order) => sum + parseFloat(order.totalAmount), 0);
-        
-        res.json({
-          totalShops: shops.length,
-          totalProducts: products.length,
-          totalOrders: orders.length,
-          totalRevenue: totalRevenue.toFixed(2),
-          lowStockCount: lowStockProducts.length,
-        });
+        if (shopId && shopId !== 'all') {
+          // Admin viewing specific shop
+          const targetShopId = parseInt(shopId);
+          const shop = await storage.getShop(targetShopId);
+          if (!shop) {
+            return res.status(404).json({ message: "Shop not found" });
+          }
+          
+          const products = await storage.getProductsByShop(targetShopId);
+          const orders = await storage.getOrdersByShop(targetShopId);
+          const lowStockProducts = await storage.getLowStockProducts(targetShopId);
+          
+          const totalRevenue = orders.reduce((sum, order) => sum + parseFloat(order.totalAmount), 0);
+          
+          res.json({
+            totalShops: 1,
+            totalProducts: products.length,
+            totalOrders: orders.length,
+            totalRevenue: totalRevenue.toFixed(2),
+            lowStockCount: lowStockProducts.length,
+            shopName: shop.name,
+            shopType: shop.type,
+          });
+        } else {
+          // Admin viewing all shops
+          const shops = await storage.getAllShops();
+          const products = await storage.getAllProducts();
+          const orders = await storage.getAllOrders();
+          const lowStockProducts = await storage.getLowStockProducts();
+          
+          const totalRevenue = orders.reduce((sum, order) => sum + parseFloat(order.totalAmount), 0);
+          
+          res.json({
+            totalShops: shops.length,
+            totalProducts: products.length,
+            totalOrders: orders.length,
+            totalRevenue: totalRevenue.toFixed(2),
+            lowStockCount: lowStockProducts.length,
+          });
+        }
       } else {
         const shops = await storage.getShopsByOwner(req.user.id);
         let products = [];
