@@ -286,9 +286,18 @@ export async function registerRoutes(app) {
   // Stock management routes
   app.get("/api/stock/low", authenticateToken, async (req, res) => {
     try {
+      const shopId = req.query.shopId;
       let products;
+      
       if (req.user.role === 'admin') {
-        products = await storage.getLowStockProducts();
+        if (shopId) {
+          // Admin viewing specific shop
+          const targetShopId = parseInt(shopId);
+          products = await storage.getLowStockProducts(targetShopId);
+        } else {
+          // Admin viewing all shops
+          products = await storage.getLowStockProducts();
+        }
       } else {
         const shops = await storage.getShopsByOwner(req.user.id);
         products = [];
@@ -305,9 +314,18 @@ export async function registerRoutes(app) {
 
   app.get("/api/stock/out", authenticateToken, async (req, res) => {
     try {
+      const shopId = req.query.shopId;
       let products;
+      
       if (req.user.role === 'admin') {
-        products = await storage.getOutOfStockProducts();
+        if (shopId) {
+          // Admin viewing specific shop
+          const targetShopId = parseInt(shopId);
+          products = await storage.getOutOfStockProducts(targetShopId);
+        } else {
+          // Admin viewing all shops
+          products = await storage.getOutOfStockProducts();
+        }
       } else {
         const shops = await storage.getShopsByOwner(req.user.id);
         products = [];

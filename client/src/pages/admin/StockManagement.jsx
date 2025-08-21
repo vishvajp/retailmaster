@@ -1,19 +1,40 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import AdminSidebar from "@/components/Layout/AdminSidebar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 export default function StockManagement() {
+  const [selectedShopId, setSelectedShopId] = useState("all");
+
+  // Fetch all shops for the dropdown
+  const { data: shops = [] } = useQuery({
+    queryKey: ["/api/shops"],
+  });
+
+  // Build query URLs based on selected shop
+  const lowStockUrl = selectedShopId === "all" 
+    ? "/api/stock/low" 
+    : `/api/stock/low?shopId=${selectedShopId}`;
+    
+  const outOfStockUrl = selectedShopId === "all"
+    ? "/api/stock/out"
+    : `/api/stock/out?shopId=${selectedShopId}`;
+    
+  const productsUrl = selectedShopId === "all"
+    ? "/api/products"
+    : `/api/products/shop/${selectedShopId}`;
+
   const { data: lowStockProducts = [], isLoading: lowStockLoading } = useQuery({
-    queryKey: ["/api/stock/low"],
+    queryKey: [lowStockUrl],
   });
 
   const { data: outOfStockProducts = [], isLoading: outOfStockLoading } = useQuery({
-    queryKey: ["/api/stock/out"],
+    queryKey: [outOfStockUrl],
   });
 
   const { data: allProducts = [], isLoading: allProductsLoading } = useQuery({
-    queryKey: ["/api/products"],
+    queryKey: [productsUrl],
   });
 
   const healthyStockCount = allProducts.filter(p => p.stock > p.minStock).length;
@@ -24,16 +45,44 @@ export default function StockManagement() {
       
       <div className="main-content">
         <div className="d-flex justify-content-between align-items-center mb-4">
-          <h2 className="fw-bold">Stock Management</h2>
           <div>
-            <Button variant="outline" className="me-2 btn-warning">
-              <i className="fas fa-exclamation-triangle me-2"></i>
-              Low Stock Alert ({lowStockProducts.length})
-            </Button>
-            <Button variant="outline" className="btn-danger">
-              <i className="fas fa-times-circle me-2"></i>
-              Out of Stock ({outOfStockProducts.length})
-            </Button>
+            <h2 className="fw-bold">
+              Stock Management
+              {selectedShopId !== "all" && shops.length > 0 && (
+                <span className="text-muted fs-6 ms-2">
+                  - {shops.find(s => s.id.toString() === selectedShopId)?.name}
+                </span>
+              )}
+            </h2>
+          </div>
+          <div className="d-flex align-items-center gap-3">
+            <div className="d-flex align-items-center">
+              <label htmlFor="shopSelect" className="form-label me-2 mb-0">Shop:</label>
+              <select 
+                id="shopSelect"
+                className="form-select form-select-sm"
+                value={selectedShopId}
+                onChange={(e) => setSelectedShopId(e.target.value)}
+                style={{ minWidth: "180px" }}
+              >
+                <option value="all">All Shops</option>
+                {shops.map((shop) => (
+                  <option key={shop.id} value={shop.id}>
+                    {shop.name} ({shop.type})
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <Button variant="outline" className="me-2 btn-warning">
+                <i className="fas fa-exclamation-triangle me-2"></i>
+                Low Stock Alert ({lowStockProducts.length})
+              </Button>
+              <Button variant="outline" className="btn-danger">
+                <i className="fas fa-times-circle me-2"></i>
+                Out of Stock ({outOfStockProducts.length})
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -81,14 +130,11 @@ export default function StockManagement() {
             <div className="row align-items-center">
               <div className="col">
                 <h5 className="fw-bold mb-0">Stock Levels</h5>
-              </div>
-              <div className="col-auto">
-                <select className="form-select form-select-sm">
-                  <option>All Shops</option>
-                  <option>Dairy Shops</option>
-                  <option>Meat Markets</option>
-                  <option>Grocery Stores</option>
-                </select>
+                {selectedShopId !== "all" && (
+                  <small className="text-muted">
+                    Showing products for {shops.find(s => s.id.toString() === selectedShopId)?.name}
+                  </small>
+                )}
               </div>
             </div>
           </CardHeader>
