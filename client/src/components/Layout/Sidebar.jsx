@@ -2,21 +2,7 @@ import { Link, useLocation } from "wouter";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 
-interface SidebarItem {
-  href: string;
-  icon: string;
-  label: string;
-  onClick?: () => void;
-}
-
-interface SidebarProps {
-  title: string;
-  subtitle: string;
-  items: SidebarItem[];
-  className?: string;
-}
-
-export default function Sidebar({ title, subtitle, items, className }: SidebarProps) {
+export default function Sidebar({ title, subtitle, items, className }) {
   const [location] = useLocation();
   const { logout } = useAuth();
 
