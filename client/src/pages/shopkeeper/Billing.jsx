@@ -46,6 +46,7 @@ export default function Billing() {
     },
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ["/api/customers"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/bills"] });
       // Ensure proper data structure for the generated bill
       const billWithCalculatedValues = {
         ...result,
