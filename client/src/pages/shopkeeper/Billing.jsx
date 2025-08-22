@@ -175,7 +175,7 @@ export default function Billing() {
               </div>
               <div className="d-flex gap-2">
                 <span className="badge bg-primary fs-6">
-                  Total: ${getTotalAmount().toFixed(2)}
+                  Total: ₹{getTotalAmount().toFixed(2)}
                 </span>
               </div>
             </div>
@@ -287,7 +287,7 @@ export default function Billing() {
                             <SelectContent>
                               {products.map((product) => (
                                 <SelectItem key={product.id} value={product.id.toString()}>
-                                  {product.name} - ${product.price}
+                                  {product.name} - ₹{product.price}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -308,7 +308,7 @@ export default function Billing() {
                         <div className="col-md-3">
                           <Label>Total</Label>
                           <div className="fw-bold fs-6 pt-2">
-                            ${(item.price * item.quantity).toFixed(2)}
+                            ₹{(item.price * item.quantity).toFixed(2)}
                           </div>
                         </div>
                         
@@ -331,16 +331,16 @@ export default function Billing() {
                     <div className="border-top pt-3 mt-3">
                       <div className="d-flex justify-content-between mb-2">
                         <span>Subtotal:</span>
-                        <span className="fw-bold">${getTotalAmount().toFixed(2)}</span>
+                        <span className="fw-bold">₹{getTotalAmount().toFixed(2)}</span>
                       </div>
                       <div className="d-flex justify-content-between mb-2">
                         <span>Tax (10%):</span>
-                        <span className="fw-bold">${(getTotalAmount() * 0.1).toFixed(2)}</span>
+                        <span className="fw-bold">₹{(getTotalAmount() * 0.1).toFixed(2)}</span>
                       </div>
                       <div className="d-flex justify-content-between">
                         <span className="fw-bold fs-5">Total:</span>
                         <span className="fw-bold fs-5 text-primary">
-                          ${(getTotalAmount() * 1.1).toFixed(2)}
+                          ₹{(getTotalAmount() * 1.1).toFixed(2)}
                         </span>
                       </div>
                     </div>
@@ -422,23 +422,23 @@ export default function Billing() {
                       <tr key={index}>
                         <td>{item.productName}</td>
                         <td>{item.quantity}</td>
-                        <td>${parseFloat(item.price).toFixed(2)}</td>
-                        <td>${parseFloat(item.total).toFixed(2)}</td>
+                        <td>₹{parseFloat(item.price).toFixed(2)}</td>
+                        <td>₹{parseFloat(item.total).toFixed(2)}</td>
                       </tr>
                     ))}
                   </tbody>
                   <tfoot>
                     <tr>
-                      <th colspan="3">Subtotal:</th>
-                      <th>${parseFloat(generatedBill.subtotal).toFixed(2)}</th>
+                      <th colSpan="3">Subtotal:</th>
+                      <th>₹{parseFloat(generatedBill.subtotal).toFixed(2)}</th>
                     </tr>
                     <tr>
-                      <th colspan="3">Tax (10%):</th>
-                      <th>${parseFloat(generatedBill.tax).toFixed(2)}</th>
+                      <th colSpan="3">Tax (10%):</th>
+                      <th>₹{parseFloat(generatedBill.tax).toFixed(2)}</th>
                     </tr>
                     <tr>
-                      <th colspan="3">Total:</th>
-                      <th>${parseFloat(generatedBill.total).toFixed(2)}</th>
+                      <th colSpan="3">Total:</th>
+                      <th>₹{parseFloat(generatedBill.total).toFixed(2)}</th>
                     </tr>
                   </tfoot>
                 </table>
