@@ -76,6 +76,38 @@ export const orderItems = pgTable("order_items", {
   totalPrice: decimal("total_price", { precision: 10, scale: 2 }).notNull(),
 });
 
+export const customers = pgTable("customers", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  phone: text("phone").notNull(),
+  email: text("email"),
+  address: text("address"),
+  shopId: integer("shop_id").references(() => shops.id),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const bills = pgTable("bills", {
+  id: serial("id").primaryKey(),
+  billNumber: text("bill_number").notNull().unique(),
+  customerId: integer("customer_id").references(() => customers.id),
+  shopId: integer("shop_id").references(() => shops.id),
+  subtotal: decimal("subtotal", { precision: 10, scale: 2 }).notNull(),
+  tax: decimal("tax", { precision: 10, scale: 2 }).notNull(),
+  total: decimal("total", { precision: 10, scale: 2 }).notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const billItems = pgTable("bill_items", {
+  id: serial("id").primaryKey(),
+  billId: integer("bill_id").references(() => bills.id),
+  productId: integer("product_id").references(() => products.id),
+  productName: text("product_name").notNull(),
+  quantity: integer("quantity").notNull(),
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  total: decimal("total", { precision: 10, scale: 2 }).notNull(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -103,6 +135,20 @@ export const insertOrderSchema = createInsertSchema(orders).omit({
 });
 
 export const insertOrderItemSchema = createInsertSchema(orderItems).omit({
+  id: true,
+});
+
+export const insertCustomerSchema = createInsertSchema(customers).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertBillSchema = createInsertSchema(bills).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertBillItemSchema = createInsertSchema(billItems).omit({
   id: true,
 });
 

@@ -497,6 +497,188 @@ export async function registerRoutes(app) {
     }
   });
 
+  // Customer endpoints
+  app.get("/api/customers", authenticateToken, async (req, res) => {
+    try {
+      let customers;
+      if (req.user.role === 'admin') {
+        customers = await storage.getAllCustomers();
+      } else {
+        const shops = await storage.getShopsByOwner(req.user.id);
+        customers = [];
+        for (const shop of shops) {
+          const shopCustomers = await storage.getCustomersByShop(shop.id);
+          customers.push(...shopCustomers);
+        }
+      }
+      res.json(customers);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch customers" });
+    }
+  });
+
+  app.get("/api/customers/search", authenticateToken, async (req, res) => {
+    try {
+      const { q } = req.query;
+      let customers;
+      
+      if (req.user.role === 'admin') {
+        const allCustomers = await storage.getAllCustomers();
+        if (!q) {
+          customers = allCustomers;
+        } else {
+          const lowerQuery = q.toLowerCase();
+          customers = allCustomers.filter(customer => 
+            customer.name.toLowerCase().includes(lowerQuery) ||
+            customer.phone.includes(q) ||
+            (customer.email && customer.email.toLowerCase().includes(lowerQuery))
+          );
+        }
+      } else {
+        const shops = await storage.getShopsByOwner(req.user.id);
+        customers = [];
+        for (const shop of shops) {
+          const shopCustomers = await storage.searchCustomers(q, shop.id);
+          customers.push(...shopCustomers);
+        }
+      }
+      
+      res.json(customers);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to search customers" });
+    }
+  });
+
+  app.get("/api/customers/purchases", authenticateToken, async (req, res) => {
+    try {
+      let customers;
+      if (req.user.role === 'admin') {
+        customers = await storage.getAllCustomers();
+      } else {
+        const shops = await storage.getShopsByOwner(req.user.id);
+        customers = [];
+        for (const shop of shops) {
+          const shopCustomers = await storage.getCustomersByShop(shop.id);
+          customers.push(...shopCustomers);
+        }
+      }
+
+      const customerPurchases = {};
+      for (const customer of customers) {
+        const bills = await storage.getBillsByCustomer(customer.id);
+        const total = bills.reduce((sum, bill) => sum + parseFloat(bill.total || 0), 0);
+        const lastBill = bills.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
+        
+        customerPurchases[customer.id] = {
+          bills: bills.length,
+          total: total,
+          lastPurchase: lastBill ? lastBill.createdAt : null
+        };
+      }
+
+      res.json(customerPurchases);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch customer purchases" });
+    }
+  });
+
+  app.post("/api/customers", authenticateToken, async (req, res) => {
+    try {
+      if (req.user.role !== 'admin') {
+        const shops = await storage.getShopsByOwner(req.user.id);
+        if (shops.length > 0) {
+          req.body.shopId = shops[0].id;
+        }
+      }
+
+      const customer = await storage.createCustomer(req.body);
+      res.status(201).json(customer);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to create customer" });
+    }
+  });
+
+  app.get("/api/customers/:id", authenticateToken, async (req, res) => {
+    try {
+      const customerId = parseInt(req.params.id);
+      const customer = await storage.getCustomer(customerId);
+      
+      if (!customer) {
+        return res.status(404).json({ message: "Customer not found" });
+      }
+
+      if (req.user.role !== 'admin') {
+        const shops = await storage.getShopsByOwner(req.user.id);
+        const hasAccess = shops.some(shop => shop.id === customer.shopId);
+        if (!hasAccess) {
+          return res.status(403).json({ message: "Access denied" });
+        }
+      }
+
+      res.json(customer);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch customer" });
+    }
+  });
+
+  // Bill endpoints
+  app.post("/api/bills", authenticateToken, async (req, res) => {
+    try {
+      const { customer, items, subtotal, tax, total } = req.body;
+      
+      let shopId = req.body.shopId;
+      if (req.user.role !== 'admin') {
+        const shops = await storage.getShopsByOwner(req.user.id);
+        if (shops.length > 0) {
+          shopId = shops[0].id;
+        }
+      }
+
+      let customerId = customer.id;
+      if (!customerId && customer.name && customer.phone) {
+        const existingCustomers = await storage.searchCustomers(customer.phone, shopId);
+        if (existingCustomers.length > 0) {
+          customerId = existingCustomers[0].id;
+        } else {
+          const newCustomer = await storage.createCustomer({
+            name: customer.name,
+            phone: customer.phone,
+            email: customer.email || '',
+            address: customer.address || '',
+            shopId: shopId
+          });
+          customerId = newCustomer.id;
+        }
+      }
+
+      const billNumber = `BILL-${Date.now()}`;
+      const bill = await storage.createBill({
+        billNumber,
+        customerId,
+        shopId,
+        subtotal: subtotal.toString(),
+        tax: tax.toString(),
+        total: total.toString()
+      });
+
+      for (const item of items) {
+        await storage.createBillItem({
+          billId: bill.id,
+          productId: parseInt(item.productId),
+          productName: item.productName,
+          quantity: item.quantity,
+          price: item.price.toString(),
+          total: item.total.toString()
+        });
+      }
+
+      res.status(201).json({ ...bill, items });
+    } catch (error) {
+      console.error("Error creating bill:", error);
+      res.status(500).json({ message: "Failed to create bill" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

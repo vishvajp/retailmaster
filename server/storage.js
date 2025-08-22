@@ -1,5 +1,5 @@
 import { 
-  users, shops, categories, products, orders, orderItems
+  users, shops, categories, products, orders, orderItems, customers, bills, billItems
 } from "../shared/schema.js";
 
 export class MemStorage {
@@ -10,6 +10,9 @@ export class MemStorage {
     this.products = new Map();
     this.orders = new Map();
     this.orderItems = new Map();
+    this.customers = new Map();
+    this.bills = new Map();
+    this.billItems = new Map();
     this.currentIds = {
       users: 0,
       shops: 0,
@@ -17,6 +20,9 @@ export class MemStorage {
       products: 0,
       orders: 0,
       orderItems: 0,
+      customers: 0,
+      bills: 0,
+      billItems: 0,
     };
 
     // Initialize with demo data
@@ -111,6 +117,43 @@ export class MemStorage {
       updatedAt: new Date(),
     };
     this.orders.set(order1.id, order1);
+
+    // Create demo customers
+    const customer1 = {
+      id: this.currentIds.customers++,
+      name: "Alice Johnson",
+      phone: "+1-234-567-8910",
+      email: "alice.johnson@email.com",
+      address: "456 Oak Street, City",
+      shopId: dairyShop.id,
+      isActive: true,
+      createdAt: new Date(),
+    };
+    this.customers.set(customer1.id, customer1);
+
+    const customer2 = {
+      id: this.currentIds.customers++,
+      name: "Bob Smith",
+      phone: "+1-234-567-8911",
+      email: "bob.smith@email.com",
+      address: "789 Pine Avenue, City",
+      shopId: dairyShop.id,
+      isActive: true,
+      createdAt: new Date(),
+    };
+    this.customers.set(customer2.id, customer2);
+
+    const customer3 = {
+      id: this.currentIds.customers++,
+      name: "Carol Davis",
+      phone: "+1-234-567-8912",
+      email: "carol.davis@email.com",
+      address: "321 Elm Street, City",
+      shopId: dairyShop.id,
+      isActive: true,
+      createdAt: new Date(),
+    };
+    this.customers.set(customer3.id, customer3);
   }
 
   // User operations
@@ -330,6 +373,106 @@ export class MemStorage {
 
   async getOrderItems(orderId) {
     return Array.from(this.orderItems.values()).filter(item => item.orderId === orderId);
+  }
+
+  // Customer operations
+  async createCustomer(insertCustomer) {
+    const customer = {
+      ...insertCustomer,
+      id: this.currentIds.customers++,
+      createdAt: new Date(),
+    };
+    this.customers.set(customer.id, customer);
+    return customer;
+  }
+
+  async getCustomer(id) {
+    return this.customers.get(id);
+  }
+
+  async getAllCustomers() {
+    return Array.from(this.customers.values());
+  }
+
+  async getCustomersByShop(shopId) {
+    return Array.from(this.customers.values()).filter(customer => customer.shopId === shopId);
+  }
+
+  async searchCustomers(query, shopId) {
+    const customers = await this.getCustomersByShop(shopId);
+    if (!query) return customers;
+    
+    const lowerQuery = query.toLowerCase();
+    return customers.filter(customer => 
+      customer.name.toLowerCase().includes(lowerQuery) ||
+      customer.phone.includes(query) ||
+      (customer.email && customer.email.toLowerCase().includes(lowerQuery))
+    );
+  }
+
+  async updateCustomer(id, updates) {
+    const customer = this.customers.get(id);
+    if (!customer) return undefined;
+    
+    const updatedCustomer = { ...customer, ...updates };
+    this.customers.set(id, updatedCustomer);
+    return updatedCustomer;
+  }
+
+  async deleteCustomer(id) {
+    return this.customers.delete(id);
+  }
+
+  // Bill operations
+  async createBill(insertBill) {
+    const bill = {
+      ...insertBill,
+      id: this.currentIds.bills++,
+      createdAt: new Date(),
+    };
+    this.bills.set(bill.id, bill);
+    return bill;
+  }
+
+  async getBill(id) {
+    return this.bills.get(id);
+  }
+
+  async getAllBills() {
+    return Array.from(this.bills.values());
+  }
+
+  async getBillsByShop(shopId) {
+    return Array.from(this.bills.values()).filter(bill => bill.shopId === shopId);
+  }
+
+  async getBillsByCustomer(customerId) {
+    return Array.from(this.bills.values()).filter(bill => bill.customerId === customerId);
+  }
+
+  // Bill item operations
+  async createBillItem(insertBillItem) {
+    const billItem = {
+      ...insertBillItem,
+      id: this.currentIds.billItems++,
+    };
+    this.billItems.set(billItem.id, billItem);
+    return billItem;
+  }
+
+  async getBillItemsByBill(billId) {
+    return Array.from(this.billItems.values()).filter(item => item.billId === billId);
+  }
+
+  async getCustomerPurchaseHistory(customerId) {
+    const customerBills = await this.getBillsByCustomer(customerId);
+    const billsWithItems = await Promise.all(
+      customerBills.map(async (bill) => ({
+        ...bill,
+        items: await this.getBillItemsByBill(bill.id),
+      }))
+    );
+    return billsWithItems;
   }
 }
 
