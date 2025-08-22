@@ -23,6 +23,7 @@ import AddProduct from "@/pages/shopkeeper/AddProduct.jsx";
 import ShopkeeperOrders from "@/pages/shopkeeper/Orders.jsx";
 import StockAlerts from "@/pages/shopkeeper/StockAlerts.jsx";
 import ShopkeeperReports from "@/pages/shopkeeper/Reports.jsx";
+import Billing from "@/pages/shopkeeper/Billing.jsx";
 
 function Router() {
   return (
@@ -97,6 +98,12 @@ function Router() {
       <Route path="/shopkeeper/stock">
         <ProtectedRoute requiredRole="shopkeeper">
           <StockAlerts />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/shopkeeper/billing">
+        <ProtectedRoute requiredRole="shopkeeper">
+          <Billing />
         </ProtectedRoute>
       </Route>
       

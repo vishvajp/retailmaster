@@ -43,6 +43,11 @@ export default function ShopkeeperSidebar() {
           Stock Alerts
         </Link>
         
+        <Link href="/shopkeeper/billing" className={`nav-link ${isActive('/shopkeeper/billing') ? 'active' : ''}`}>
+          <i className="fas fa-file-invoice-dollar me-2"></i>
+          Billing
+        </Link>
+        
         <Link href="/shopkeeper/reports" className={`nav-link ${isActive('/shopkeeper/reports') ? 'active' : ''}`}>
           <i className="fas fa-chart-line me-2"></i>
           Sales Report
