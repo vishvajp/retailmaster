@@ -679,6 +679,44 @@ export async function registerRoutes(app) {
     }
   });
 
+  // Get bills endpoint
+  app.get("/api/bills", authenticateToken, async (req, res) => {
+    try {
+      let bills;
+      
+      if (req.user.role === 'admin') {
+        // Admin can see all bills
+        bills = await storage.getAllBills();
+      } else {
+        // Shopkeeper can only see bills from their shop
+        const shops = await storage.getShopsByOwner(req.user.id);
+        bills = [];
+        for (const shop of shops) {
+          const shopBills = await storage.getBillsByShop(shop.id);
+          bills.push(...shopBills);
+        }
+      }
+
+      // Enhance bills with customer and item information
+      const billsWithDetails = await Promise.all(
+        bills.map(async (bill) => {
+          const customer = await storage.getCustomer(bill.customerId);
+          const items = await storage.getBillItemsByBill(bill.id);
+          return {
+            ...bill,
+            customer,
+            items
+          };
+        })
+      );
+
+      res.json(billsWithDetails);
+    } catch (error) {
+      console.error("Error fetching bills:", error);
+      res.status(500).json({ message: "Failed to fetch bills" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
