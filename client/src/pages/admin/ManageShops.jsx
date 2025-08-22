@@ -22,6 +22,7 @@ export default function ManageShops() {
     email: "",
     description: "",
     ownerId: null,
+    logoUrl: "",
   });
 
   const { data: shops = [], isLoading } = useQuery({
@@ -76,6 +77,7 @@ export default function ManageShops() {
       email: "",
       description: "",
       ownerId: null,
+      logoUrl: "",
     });
     setShowAddForm(false);
     setEditingShop(null);
@@ -99,6 +101,7 @@ export default function ManageShops() {
       email: shop.email || "",
       description: shop.description || "",
       ownerId: shop.ownerId,
+      logoUrl: shop.logoUrl || "",
     });
     setEditingShop(shop);
     setShowAddForm(true);
@@ -106,6 +109,18 @@ export default function ManageShops() {
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Create a preview URL for the image
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData(prev => ({ ...prev, logoUrl: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const getShopTypeIcon = (type) => {
@@ -216,6 +231,29 @@ export default function ManageShops() {
                     onChange={(e) => handleInputChange('address', e.target.value)}
                     rows={2}
                   />
+                </div>
+
+                <div className="mb-3">
+                  <Label htmlFor="logo">Shop Logo</Label>
+                  <Input
+                    id="logo"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="form-control"
+                    data-testid="input-shop-logo"
+                  />
+                  <small className="text-muted">Upload an image file for your shop logo (JPG, PNG, etc.)</small>
+                  {formData.logoUrl && (
+                    <div className="mt-2">
+                      <img 
+                        src={formData.logoUrl} 
+                        alt="Shop logo preview" 
+                        className="img-thumbnail"
+                        style={{ maxWidth: "150px", maxHeight: "150px" }}
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <div className="row">
