@@ -32,6 +32,14 @@ export default function Billing() {
     enabled: customerSearch.length > 0
   });
 
+  // Fetch shop information for logo display
+  const { data: shops = [] } = useQuery({
+    queryKey: ["/api/shops"],
+  });
+
+  // Get the shopkeeper's shop (assuming first shop for now)
+  const shopInfo = shops.length > 0 ? shops[0] : null;
+
   const createBillMutation = useMutation({
     mutationFn: async (billData) => {
       return apiRequest("POST", "/api/bills", billData);
@@ -388,9 +396,20 @@ export default function Billing() {
             <div className="d-print-block d-none">
               <div className="bill-container mx-auto" style={{maxWidth: '800px'}}>
                 <div className="text-center mb-4">
-                  <h2 className="fw-bold">Fresh Dairy Shop</h2>
-                  <p className="mb-1">123 Main St, City</p>
-                  <p className="mb-3">Phone: +1-234-567-8901</p>
+                  {shopInfo && shopInfo.logoUrl && (
+                    <div className="mb-3">
+                      <img 
+                        src={shopInfo.logoUrl} 
+                        alt={`${shopInfo.name} logo`}
+                        className="mx-auto d-block"
+                        style={{ maxWidth: "120px", maxHeight: "120px", objectFit: "contain" }}
+                      />
+                    </div>
+                  )}
+                  <h2 className="fw-bold">{shopInfo ? shopInfo.name : 'Fresh Dairy Shop'}</h2>
+                  {shopInfo && shopInfo.address && <p className="mb-1">{shopInfo.address}</p>}
+                  {shopInfo && shopInfo.phone && <p className="mb-1">Phone: {shopInfo.phone}</p>}
+                  {shopInfo && shopInfo.email && <p className="mb-3">Email: {shopInfo.email}</p>}
                   <hr />
                 </div>
                 

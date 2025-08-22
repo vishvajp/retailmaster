@@ -1,20 +1,53 @@
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/contexts/AuthContext";
+import { useQuery } from "@tanstack/react-query";
 
 export default function ShopkeeperSidebar() {
   const [location] = useLocation();
   const { user, logout } = useAuth();
+
+  // Fetch shop information
+  const { data: shops = [] } = useQuery({
+    queryKey: ["/api/shops"],
+  });
+
+  // Get the shopkeeper's shop (assuming first shop for now)
+  const shopInfo = shops.length > 0 ? shops[0] : null;
 
   const isActive = (path) => location === path;
 
   return (
     <div className="sidebar">
       <div className="p-3 border-bottom border-secondary">
-        <h4 className="text-white mb-0">
-          <i className="fas fa-store me-2"></i>
-          ShopManager Pro
-        </h4>
-        <small className="text-muted">Shopkeeper Panel</small>
+        {shopInfo ? (
+          <div className="d-flex align-items-center mb-2">
+            {shopInfo.logoUrl ? (
+              <img 
+                src={shopInfo.logoUrl} 
+                alt={`${shopInfo.name} logo`}
+                className="me-3 rounded"
+                style={{ width: "50px", height: "50px", objectFit: "cover" }}
+              />
+            ) : (
+              <div className="me-3 bg-primary rounded d-flex align-items-center justify-content-center" 
+                   style={{ width: "50px", height: "50px" }}>
+                <i className="fas fa-store text-white fs-5"></i>
+              </div>
+            )}
+            <div>
+              <h5 className="text-white mb-0">{shopInfo.name}</h5>
+              <small className="text-muted">{shopInfo.type.charAt(0).toUpperCase() + shopInfo.type.slice(1)} Shop</small>
+            </div>
+          </div>
+        ) : (
+          <div>
+            <h4 className="text-white mb-0">
+              <i className="fas fa-store me-2"></i>
+              ShopManager Pro
+            </h4>
+            <small className="text-muted">Shopkeeper Panel</small>
+          </div>
+        )}
       </div>
       
       <nav className="nav flex-column p-3">

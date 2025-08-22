@@ -18,6 +18,14 @@ export default function ShopkeeperDashboard() {
     queryKey: ["/api/stock/low"],
   });
 
+  // Fetch shop information
+  const { data: shops = [] } = useQuery({
+    queryKey: ["/api/shops"],
+  });
+
+  // Get the shopkeeper's shop (assuming first shop for now)
+  const shopInfo = shops.length > 0 ? shops[0] : null;
+
   if (isLoading) {
     return (
       <div className="min-h-screen d-flex">
@@ -39,9 +47,19 @@ export default function ShopkeeperDashboard() {
       
       <div className="main-content">
         <div className="d-flex justify-content-between align-items-center mb-4">
-          <div>
-            <h2 className="fw-bold">Dashboard</h2>
-            <p className="text-muted mb-0">Fresh Dairy Shop - Daily Overview</p>
+          <div className="d-flex align-items-center">
+            {shopInfo && shopInfo.logoUrl && (
+              <img 
+                src={shopInfo.logoUrl} 
+                alt={`${shopInfo.name} logo`}
+                className="me-3 rounded"
+                style={{ width: "60px", height: "60px", objectFit: "cover" }}
+              />
+            )}
+            <div>
+              <h2 className="fw-bold">Dashboard</h2>
+              <p className="text-muted mb-0">{shopInfo ? `${shopInfo.name} - Daily Overview` : 'Fresh Dairy Shop - Daily Overview'}</p>
+            </div>
           </div>
           <div>
             <span className="badge bg-success">Online</span>
