@@ -81,6 +81,11 @@ export default function ShopkeeperSidebar() {
           Billing
         </Link>
         
+        <Link href="/shopkeeper/bills" className={`nav-link ${isActive('/shopkeeper/bills') ? 'active' : ''}`}>
+          <i className="fas fa-receipt me-2"></i>
+          Bill History
+        </Link>
+        
         <Link href="/shopkeeper/customers" className={`nav-link ${isActive('/shopkeeper/customers') ? 'active' : ''}`}>
           <i className="fas fa-users me-2"></i>
           Customers
