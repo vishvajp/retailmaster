@@ -46,7 +46,16 @@ export default function Billing() {
     },
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ["/api/customers"] });
-      setGeneratedBill(result);
+      // Ensure proper data structure for the generated bill
+      const billWithCalculatedValues = {
+        ...result,
+        subtotal: getTotalAmount(),
+        tax: getTotalAmount() * 0.1,
+        total: getTotalAmount() * 1.1,
+        customer: customerInfo,
+        createdAt: new Date().toISOString()
+      };
+      setGeneratedBill(billWithCalculatedValues);
       toast({
         title: "Bill Created",
         description: `Bill ${result.billNumber} created successfully`,
@@ -394,73 +403,99 @@ export default function Billing() {
           <div className="text-center">
             {/* Bill Display */}
             <div className="d-print-block d-none">
-              <div className="bill-container mx-auto" style={{maxWidth: '800px'}}>
-                <div className="text-center mb-4">
+              <div className="bill-container mx-auto p-4 bg-white" style={{maxWidth: '800px', fontFamily: 'Arial, sans-serif'}}>
+                {/* Header Section */}
+                <div className="text-center mb-4 border-bottom pb-3">
                   {shopInfo && shopInfo.logoUrl && (
                     <div className="mb-3">
                       <img 
                         src={shopInfo.logoUrl} 
                         alt={`${shopInfo.name} logo`}
                         className="mx-auto d-block"
-                        style={{ maxWidth: "120px", maxHeight: "120px", objectFit: "contain" }}
+                        style={{ maxWidth: "100px", maxHeight: "100px", objectFit: "contain" }}
                       />
                     </div>
                   )}
-                  <h2 className="fw-bold">{shopInfo ? shopInfo.name : 'Fresh Dairy Shop'}</h2>
-                  {shopInfo && shopInfo.address && <p className="mb-1">{shopInfo.address}</p>}
-                  {shopInfo && shopInfo.phone && <p className="mb-1">Phone: {shopInfo.phone}</p>}
-                  {shopInfo && shopInfo.email && <p className="mb-3">Email: {shopInfo.email}</p>}
-                  <hr />
+                  <h2 className="fw-bold mb-2" style={{color: '#2c3e50'}}>{shopInfo ? shopInfo.name : 'Fresh Dairy Shop'}</h2>
+                  {shopInfo && shopInfo.address && <p className="mb-1 text-muted">{shopInfo.address}</p>}
+                  {shopInfo && shopInfo.phone && <p className="mb-1 text-muted">Phone: {shopInfo.phone}</p>}
+                  {shopInfo && shopInfo.email && <p className="mb-1 text-muted">Email: {shopInfo.email}</p>}
                 </div>
                 
+                {/* Bill Info Section */}
                 <div className="row mb-4">
                   <div className="col-md-6">
-                    <strong>Bill To:</strong>
-                    <p className="mb-1">{generatedBill.customer?.name}</p>
-                    <p className="mb-1">{generatedBill.customer?.phone}</p>
-                    {generatedBill.customer?.email && <p className="mb-1">{generatedBill.customer?.email}</p>}
-                    {generatedBill.customer?.address && <p className="mb-1">{generatedBill.customer?.address}</p>}
+                    <h5 className="fw-bold mb-2">Bill To:</h5>
+                    <div className="border-start border-3 border-primary ps-3">
+                      <p className="mb-1 fw-semibold">{generatedBill.customer?.name || 'N/A'}</p>
+                      <p className="mb-1 text-muted">{generatedBill.customer?.phone || 'N/A'}</p>
+                      {generatedBill.customer?.email && <p className="mb-1 text-muted">{generatedBill.customer.email}</p>}
+                      {generatedBill.customer?.address && <p className="mb-1 text-muted">{generatedBill.customer.address}</p>}
+                    </div>
                   </div>
                   <div className="col-md-6 text-end">
-                    <strong>Bill #:</strong> {generatedBill.billNumber}<br />
-                    <strong>Date:</strong> {new Date(generatedBill.createdAt).toLocaleDateString()}
+                    <div className="border border-primary rounded p-3">
+                      <p className="mb-2"><strong>Bill #:</strong> <span className="text-primary">{generatedBill.billNumber || 'N/A'}</span></p>
+                      <p className="mb-0"><strong>Date:</strong> {generatedBill.createdAt ? new Date(generatedBill.createdAt).toLocaleDateString() : new Date().toLocaleDateString()}</p>
+                    </div>
                   </div>
                 </div>
 
-                <table className="table table-bordered">
-                  <thead>
+                {/* Items Table */}
+                <table className="table table-bordered table-striped mb-4">
+                  <thead className="table-dark">
                     <tr>
                       <th>Product</th>
-                      <th>Qty</th>
-                      <th>Price</th>
-                      <th>Total</th>
+                      <th width="80">Qty</th>
+                      <th width="100">Price</th>
+                      <th width="100">Total</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {generatedBill.items?.map((item, index) => (
-                      <tr key={index}>
-                        <td>{item.productName}</td>
-                        <td>{item.quantity}</td>
-                        <td>₹{parseFloat(item.price).toFixed(2)}</td>
-                        <td>₹{parseFloat(item.total).toFixed(2)}</td>
-                      </tr>
-                    ))}
+                    {generatedBill.items && generatedBill.items.length > 0 ? 
+                      generatedBill.items.map((item, index) => (
+                        <tr key={index}>
+                          <td className="fw-semibold">{item.productName || 'Unknown Product'}</td>
+                          <td className="text-center">{item.quantity || 0}</td>
+                          <td className="text-end">₹{(parseFloat(item.price) || 0).toFixed(2)}</td>
+                          <td className="text-end fw-bold">₹{(parseFloat(item.total) || 0).toFixed(2)}</td>
+                        </tr>
+                      )) : (
+                        <tr>
+                          <td colSpan="4" className="text-center text-muted">No items found</td>
+                        </tr>
+                      )
+                    }
                   </tbody>
-                  <tfoot>
-                    <tr>
-                      <th colSpan="3">Subtotal:</th>
-                      <th>₹{parseFloat(generatedBill.subtotal).toFixed(2)}</th>
-                    </tr>
-                    <tr>
-                      <th colSpan="3">Tax (10%):</th>
-                      <th>₹{parseFloat(generatedBill.tax).toFixed(2)}</th>
-                    </tr>
-                    <tr>
-                      <th colSpan="3">Total:</th>
-                      <th>₹{parseFloat(generatedBill.total).toFixed(2)}</th>
-                    </tr>
-                  </tfoot>
                 </table>
+                
+                {/* Totals Section */}
+                <div className="row justify-content-end">
+                  <div className="col-md-6">
+                    <table className="table table-borderless">
+                      <tbody>
+                        <tr>
+                          <td className="text-end fw-semibold">Subtotal:</td>
+                          <td className="text-end fw-bold">₹{(generatedBill.subtotal || 0).toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                          <td className="text-end fw-semibold">Tax (10%):</td>
+                          <td className="text-end fw-bold">₹{(generatedBill.tax || 0).toFixed(2)}</td>
+                        </tr>
+                        <tr className="border-top border-2">
+                          <td className="text-end fw-bold fs-5">Total:</td>
+                          <td className="text-end fw-bold fs-5 text-primary">₹{(generatedBill.total || 0).toFixed(2)}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                
+                {/* Footer */}
+                <div className="text-center mt-4 pt-3 border-top">
+                  <p className="small text-muted mb-0">Thank you for your business!</p>
+                  <p className="small text-muted">Generated on {new Date().toLocaleString()}</p>
+                </div>
               </div>
             </div>
 
