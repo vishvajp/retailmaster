@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils"
 
 const ToastProvider = ToastPrimitives.Provider
 
+const ToastViewport = React.forwardRef(({ className, ...props }, ref) => (
   <ToastPrimitives.Viewport
     ref={ref}
     className={cn(
@@ -34,6 +35,7 @@ const toastVariants = cva(
   }
 )
 
+const Toast = React.forwardRef(({ className, variant, ...props }, ref) => {
   return (
     <ToastPrimitives.Root
       ref={ref}
@@ -44,6 +46,7 @@ const toastVariants = cva(
 })
 Toast.displayName = ToastPrimitives.Root.displayName
 
+const ToastAction = React.forwardRef(({ className, ...props }, ref) => (
   <ToastPrimitives.Action
     ref={ref}
     className={cn(
@@ -55,6 +58,7 @@ Toast.displayName = ToastPrimitives.Root.displayName
 ))
 ToastAction.displayName = ToastPrimitives.Action.displayName
 
+const ToastClose = React.forwardRef(({ className, ...props }, ref) => (
   <ToastPrimitives.Close
     ref={ref}
     className={cn(
@@ -69,6 +73,7 @@ ToastAction.displayName = ToastPrimitives.Action.displayName
 ))
 ToastClose.displayName = ToastPrimitives.Close.displayName
 
+const ToastTitle = React.forwardRef(({ className, ...props }, ref) => (
   <ToastPrimitives.Title
     ref={ref}
     className={cn("text-sm font-semibold", className)}
@@ -77,6 +82,7 @@ ToastClose.displayName = ToastPrimitives.Close.displayName
 ))
 ToastTitle.displayName = ToastPrimitives.Title.displayName
 
+const ToastDescription = React.forwardRef(({ className, ...props }, ref) => (
   <ToastPrimitives.Description
     ref={ref}
     className={cn("text-sm opacity-90", className)}
@@ -85,12 +91,7 @@ ToastTitle.displayName = ToastPrimitives.Title.displayName
 ))
 ToastDescription.displayName = ToastPrimitives.Description.displayName
 
-
-type ToastActionElement = React.ReactElement<typeof ToastAction>
-
 export {
-  type ToastProps,
-  type ToastActionElement,
   ToastProvider,
   ToastViewport,
   Toast,

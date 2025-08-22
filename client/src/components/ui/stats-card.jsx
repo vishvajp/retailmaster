@@ -1,21 +1,13 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
-interface StatsCardProps {
-  title: string;
-  value: string | number;
-  icon: string;
-  variant?: "default" | "success" | "warning" | "info";
-  className?: string;
-}
-
 export default function StatsCard({ 
   title, 
   value, 
   icon, 
   variant = "default",
   className 
-}: StatsCardProps) {
+}) {
   return (
     <Card className={cn(
       "stats-card text-white",

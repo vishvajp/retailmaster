@@ -22,12 +22,12 @@ export default function ManageShops() {
 
   const { toast } = useToast();
 
-  const { data: shops = [], isLoading } = useQuery<Shop[]>({
+  const { data: shops = [], isLoading } = useQuery({
     queryKey: ["/api/shops"],
   });
 
   const createShopMutation = useMutation({
-    mutationFn: async (shopData: typeof formData) => {
+    mutationFn: async (shopData) => {
       return apiRequest("POST", "/api/shops", shopData);
     },
     onSuccess: () => {
@@ -56,7 +56,7 @@ export default function ManageShops() {
   });
 
   const deleteShopMutation = useMutation({
-    mutationFn: async (shopId: number) => {
+    mutationFn: async (shopId) => {
       return apiRequest("DELETE", `/api/shops/${shopId}`);
     },
     onSuccess: () => {
@@ -75,12 +75,12 @@ export default function ManageShops() {
     },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     createShopMutation.mutate(formData);
   };
 
-  const handleDelete = (shopId: number) => {
+  const handleDelete = (shopId) => {
     if (confirm("Are you sure you want to delete this shop?")) {
       deleteShopMutation.mutate(shopId);
     }

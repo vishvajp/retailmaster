@@ -4,15 +4,15 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 export default function StockManagement() {
-  const { data: lowStockProducts = [], isLoading: lowStockLoading } = useQuery<Product[]>({
+  const { data: lowStockProducts = [], isLoading: lowStockLoading } = useQuery({
     queryKey: ["/api/stock/low"],
   });
 
-  const { data: outOfStockProducts = [], isLoading: outOfStockLoading } = useQuery<Product[]>({
+  const { data: outOfStockProducts = [], isLoading: outOfStockLoading } = useQuery({
     queryKey: ["/api/stock/out"],
   });
 
-  const { data: allProducts = [], isLoading: allProductsLoading } = useQuery<Product[]>({
+  const { data: allProducts = [], isLoading: allProductsLoading } = useQuery({
     queryKey: ["/api/products"],
   });
 
