@@ -1,44 +1,33 @@
 import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
-export default function StatsCard({ title, value, icon, variant = "default" }) {
-  const getVariantClasses = () => {
-    switch (variant) {
-      case "success":
-        return "border-success";
-      case "warning":
-        return "border-warning";
-      case "danger":
-        return "border-danger";
-      default:
-        return "border-primary";
-    }
-  };
+interface StatsCardProps {
+  title: string;
+  value: string | number;
+  icon: string;
+  variant?: "default" | "success" | "warning" | "info";
+  className?: string;
+}
 
-  const getIconClasses = () => {
-    switch (variant) {
-      case "success":
-        return "text-success";
-      case "warning":
-        return "text-warning";
-      case "danger":
-        return "text-danger";
-      default:
-        return "text-primary";
-    }
-  };
-
+export default function StatsCard({ 
+  title, 
+  value, 
+  icon, 
+  variant = "default",
+  className 
+}: StatsCardProps) {
   return (
-    <Card className={`dashboard-card ${getVariantClasses()}`}>
-      <CardContent className="p-4">
-        <div className="d-flex align-items-center justify-content-between">
-          <div>
-            <p className="text-muted mb-1 small">{title}</p>
-            <h3 className="fw-bold mb-0">{value}</h3>
-          </div>
-          <div className={`fs-1 ${getIconClasses()}`}>
-            <i className={icon}></i>
-          </div>
-        </div>
+    <Card className={cn(
+      "stats-card text-white",
+      variant === "success" && "stats-card-success",
+      variant === "warning" && "stats-card-warning", 
+      variant === "info" && "stats-card-info",
+      className
+    )}>
+      <CardContent className="p-4 text-center">
+        <i className={`${icon} fa-2x mb-2`}></i>
+        <h3 className="fw-bold">{value}</h3>
+        <p className="mb-0">{title}</p>
       </CardContent>
     </Card>
   );

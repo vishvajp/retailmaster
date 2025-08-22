@@ -1,126 +1,54 @@
-import { Link, useLocation } from "wouter";
-import { useAuth } from "@/contexts/AuthContext";
-import { useQuery } from "@tanstack/react-query";
+import Sidebar from "./Sidebar";
 
 export default function ShopkeeperSidebar() {
-  const [location] = useLocation();
-  const { user, logout } = useAuth();
-
-  // Fetch shop information
-  const { data: shops = [] } = useQuery({
-    queryKey: ["/api/shops"],
-  });
-
-  // Get the shopkeeper's shop (assuming first shop for now)
-  const shopInfo = shops.length > 0 ? shops[0] : null;
-
-  const isActive = (path) => location === path;
+  const sidebarItems = [
+    {
+      href: "/shopkeeper",
+      icon: "fas fa-tachometer-alt",
+      label: "Dashboard",
+    },
+    {
+      href: "/shopkeeper/products",
+      icon: "fas fa-box",
+      label: "My Products",
+    },
+    {
+      href: "/shopkeeper/add-product",
+      icon: "fas fa-plus",
+      label: "Add New Product",
+    },
+    {
+      href: "/shopkeeper/categories",
+      icon: "fas fa-tags",
+      label: "Category Management",
+    },
+    {
+      href: "/shopkeeper/stock",
+      icon: "fas fa-warehouse",
+      label: "Stock Management",
+    },
+    {
+      href: "/shopkeeper/orders",
+      icon: "fas fa-shopping-cart",
+      label: "Orders",
+    },
+    {
+      href: "/shopkeeper/sales",
+      icon: "fas fa-chart-line",
+      label: "Sales Summary",
+    },
+    {
+      href: "/shopkeeper/settings",
+      icon: "fas fa-cog",
+      label: "Settings",
+    },
+  ];
 
   return (
-    <div className="sidebar">
-      <div className="p-3 border-bottom border-secondary">
-        {shopInfo ? (
-          <div className="d-flex align-items-center mb-2">
-            {shopInfo.logoUrl ? (
-              <img 
-                src={shopInfo.logoUrl} 
-                alt={`${shopInfo.name} logo`}
-                className="me-3 rounded"
-                style={{ width: "50px", height: "50px", objectFit: "cover" }}
-              />
-            ) : (
-              <div className="me-3 bg-primary rounded d-flex align-items-center justify-content-center" 
-                   style={{ width: "50px", height: "50px" }}>
-                <i className="fas fa-store text-white fs-5"></i>
-              </div>
-            )}
-            <div>
-              <h5 className="text-white mb-0">{shopInfo.name}</h5>
-              <small className="text-muted">{shopInfo.type.charAt(0).toUpperCase() + shopInfo.type.slice(1)} Shop</small>
-            </div>
-          </div>
-        ) : (
-          <div>
-            <h4 className="text-white mb-0">
-              <i className="fas fa-store me-2"></i>
-              ShopManager Pro
-            </h4>
-            <small className="text-muted">Shopkeeper Panel</small>
-          </div>
-        )}
-      </div>
-      
-      <nav className="nav flex-column p-3">
-        <Link href="/shopkeeper/dashboard" className={`nav-link ${isActive('/shopkeeper/dashboard') ? 'active' : ''}`}>
-          <i className="fas fa-tachometer-alt me-2"></i>
-          Dashboard
-        </Link>
-        
-        <Link href="/shopkeeper/products" className={`nav-link ${isActive('/shopkeeper/products') ? 'active' : ''}`}>
-          <i className="fas fa-box me-2"></i>
-          My Products
-        </Link>
-        
-        <Link href="/shopkeeper/add-product" className={`nav-link ${isActive('/shopkeeper/add-product') ? 'active' : ''}`}>
-          <i className="fas fa-plus me-2"></i>
-          Add Product
-        </Link>
-        
-        <Link href="/shopkeeper/orders" className={`nav-link ${isActive('/shopkeeper/orders') ? 'active' : ''}`}>
-          <i className="fas fa-shopping-cart me-2"></i>
-          Orders
-        </Link>
-        
-        <Link href="/shopkeeper/stock" className={`nav-link ${isActive('/shopkeeper/stock') ? 'active' : ''}`}>
-          <i className="fas fa-exclamation-triangle me-2"></i>
-          Stock Alerts
-        </Link>
-        
-        <Link href="/shopkeeper/billing" className={`nav-link ${isActive('/shopkeeper/billing') ? 'active' : ''}`}>
-          <i className="fas fa-file-invoice-dollar me-2"></i>
-          Billing
-        </Link>
-        
-        <Link href="/shopkeeper/bills" className={`nav-link ${isActive('/shopkeeper/bills') ? 'active' : ''}`}>
-          <i className="fas fa-receipt me-2"></i>
-          Bill History
-        </Link>
-        
-        <Link href="/shopkeeper/customers" className={`nav-link ${isActive('/shopkeeper/customers') ? 'active' : ''}`}>
-          <i className="fas fa-users me-2"></i>
-          Customers
-        </Link>
-        
-        <Link href="/shopkeeper/add-customer" className={`nav-link ${isActive('/shopkeeper/add-customer') ? 'active' : ''}`}>
-          <i className="fas fa-user-plus me-2"></i>
-          Add Customer
-        </Link>
-        
-        <Link href="/shopkeeper/reports" className={`nav-link ${isActive('/shopkeeper/reports') ? 'active' : ''}`}>
-          <i className="fas fa-chart-line me-2"></i>
-          Sales Report
-        </Link>
-      </nav>
-
-      <div className="mt-auto p-3 border-top border-secondary">
-        <div className="d-flex align-items-center mb-3">
-          <div className="bg-success rounded-circle d-flex align-items-center justify-content-center me-3" 
-               style={{ width: "40px", height: "40px" }}>
-            <i className="fas fa-user text-white"></i>
-          </div>
-          <div>
-            <div className="text-white fw-semibold">{user?.name}</div>
-            <small className="text-muted">{user?.email}</small>
-          </div>
-        </div>
-        <button 
-          onClick={logout}
-          className="btn btn-outline-light btn-sm w-100"
-        >
-          <i className="fas fa-sign-out-alt me-2"></i>
-          Logout
-        </button>
-      </div>
-    </div>
+    <Sidebar
+      title="My Shop"
+      subtitle="Fresh Dairy Shop"
+      items={sidebarItems}
+    />
   );
 }
