@@ -42,7 +42,7 @@ export default function Reports() {
           <div className="col-md-3 mb-3">
             <StatsCard
               title="Total Revenue"
-              value={`$${totalRevenue.toFixed(2)}`}
+              value={`₹${totalRevenue.toFixed(2)}`}
               icon="fas fa-dollar-sign"
               variant="success"
             />
@@ -88,7 +88,7 @@ export default function Reports() {
                       <span>Dairy Shops</span>
                     </div>
                     <div className="d-flex align-items-center">
-                      <span className="me-3">$1,250.00</span>
+                      <span className="me-3">₹1,250.00</span>
                       <span className="badge bg-info">45%</span>
                     </div>
                   </div>
@@ -102,7 +102,7 @@ export default function Reports() {
                       <span>Grocery Stores</span>
                     </div>
                     <div className="d-flex align-items-center">
-                      <span className="me-3">$950.00</span>
+                      <span className="me-3">₹950.00</span>
                       <span className="badge bg-success">35%</span>
                     </div>
                   </div>
@@ -116,7 +116,7 @@ export default function Reports() {
                       <span>Meat Markets</span>
                     </div>
                     <div className="d-flex align-items-center">
-                      <span className="me-3">$540.00</span>
+                      <span className="me-3">₹540.00</span>
                       <span className="badge bg-danger">20%</span>
                     </div>
                   </div>
@@ -146,7 +146,7 @@ export default function Reports() {
                         </div>
                       </div>
                       <div className="text-end">
-                        <div className="fw-bold text-success">$850.00</div>
+                        <div className="fw-bold text-success">₹850.00</div>
                         <small className="text-muted">25 orders</small>
                       </div>
                     </div>
@@ -190,9 +190,9 @@ export default function Reports() {
                   </tr>
                   <tr>
                     <td>Revenue</td>
-                    <td>$340.50</td>
-                    <td>$285.00</td>
-                    <td>$2,150.00</td>
+                    <td>₹340.50</td>
+                    <td>₹285.00</td>
+                    <td>₹2,150.00</td>
                     <td><span className="text-success">+19%</span></td>
                   </tr>
                   <tr>

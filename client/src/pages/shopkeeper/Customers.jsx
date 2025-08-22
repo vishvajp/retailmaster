@@ -104,7 +104,7 @@ export default function Customers() {
                             <span className="badge bg-info">{purchases.bills} bills</span>
                           </td>
                           <td>
-                            <span className="fw-bold text-success">${purchases.total.toFixed(2)}</span>
+                            <span className="fw-bold text-success">₹{purchases.total.toFixed(2)}</span>
                           </td>
                           <td>
                             {purchases.lastPurchase ? (

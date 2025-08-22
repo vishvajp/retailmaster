@@ -40,7 +40,7 @@ export default function ShopkeeperReports() {
           <div className="col-md-3 mb-3">
             <StatsCard
               title="Total Revenue"
-              value={`$${totalRevenue.toFixed(2)}`}
+              value={`₹${totalRevenue.toFixed(2)}`}
               icon="fas fa-dollar-sign"
               variant="success"
             />
@@ -105,7 +105,7 @@ export default function ShopkeeperReports() {
                             <span className="fw-bold">25</span> units
                           </td>
                           <td>
-                            <span className="fw-bold text-success">$125.00</span>
+                            <span className="fw-bold text-success">₹125.00</span>
                           </td>
                           <td>
                             <span className="text-success">
@@ -137,7 +137,7 @@ export default function ShopkeeperReports() {
               <CardContent>
                 <div className="d-flex justify-content-between align-items-center mb-2">
                   <span>Today's Sales</span>
-                  <strong className="text-success">$85.50</strong>
+                  <strong className="text-success">₹85.50</strong>
                 </div>
                 <div className="d-flex justify-content-between align-items-center mb-2">
                   <span>Orders Today</span>
@@ -145,7 +145,7 @@ export default function ShopkeeperReports() {
                 </div>
                 <div className="d-flex justify-content-between align-items-center mb-2">
                   <span>Avg. Order Value</span>
-                  <strong>$10.69</strong>
+                  <strong>₹10.69</strong>
                 </div>
                 <div className="d-flex justify-content-between align-items-center">
                   <span>Customer Return Rate</span>
@@ -173,7 +173,7 @@ export default function ShopkeeperReports() {
                 </div>
                 <div className="d-flex justify-content-between align-items-center">
                   <span>Inventory Value</span>
-                  <strong className="text-success">$2,340</strong>
+                  <strong className="text-success">₹2,340</strong>
                 </div>
               </CardContent>
             </Card>
@@ -201,10 +201,10 @@ export default function ShopkeeperReports() {
                 <tbody>
                   <tr>
                     <td>Revenue</td>
-                    <td>$1,250.00</td>
-                    <td>$1,100.00</td>
+                    <td>₹1,250.00</td>
+                    <td>₹1,100.00</td>
                     <td><span className="text-success">+13.6%</span></td>
-                    <td>$1,500.00</td>
+                    <td>₹1,500.00</td>
                     <td>
                       <div className="progress" style={{ height: "6px" }}>
                         <div className="progress-bar bg-success" style={{ width: "83%" }}></div>

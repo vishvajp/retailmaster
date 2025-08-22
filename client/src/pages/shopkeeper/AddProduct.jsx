@@ -132,7 +132,7 @@ export default function AddProduct() {
 
                   <div className="row">
                     <div className="col-md-4 mb-3">
-                      <Label htmlFor="price">Price * ($)</Label>
+                      <Label htmlFor="price">Price * (₹)</Label>
                       <Input
                         id="price"
                         type="number"

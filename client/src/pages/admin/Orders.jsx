@@ -128,7 +128,7 @@ export default function Orders() {
                           <span className="badge bg-secondary">{order.shopName}</span>
                         </td>
                         <td>{order.itemCount || 1}</td>
-                        <td><strong>${order.total}</strong></td>
+                        <td><strong>₹{order.total}</strong></td>
                         <td>
                           <span className={`badge ${
                             order.status === 'completed' ? 'bg-success' :

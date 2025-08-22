@@ -115,7 +115,7 @@ export default function Products() {
                             <code className="small">{product.sku}</code>
                           </td>
                           <td>
-                            <span className="fw-bold">${product.price}</span>
+                            <span className="fw-bold">₹{product.price}</span>
                             <small className="text-muted">/{product.unit}</small>
                           </td>
                           <td>

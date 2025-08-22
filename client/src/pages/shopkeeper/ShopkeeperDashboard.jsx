@@ -54,7 +54,7 @@ export default function ShopkeeperDashboard() {
           <div className="col-md-3 mb-3">
             <StatsCard
               title="Today's Profit"
-              value={`$${stats?.dailyProfit || "0.00"}`}
+              value={`₹${stats?.dailyProfit || "0.00"}`}
               icon="fas fa-dollar-sign"
               variant="default"
             />
@@ -115,7 +115,7 @@ export default function ShopkeeperDashboard() {
                           <tr key={order.id}>
                             <td><strong>#{order.id}</strong></td>
                             <td>{order.customerName}</td>
-                            <td><strong>${order.total}</strong></td>
+                            <td><strong>₹{order.total}</strong></td>
                             <td>
                               <span className={`badge ${
                                 order.status === 'completed' ? 'bg-success' :

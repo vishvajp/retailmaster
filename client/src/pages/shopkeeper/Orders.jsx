@@ -66,7 +66,7 @@ export default function ShopkeeperOrders() {
                           </div>
                         </td>
                         <td>{order.itemCount || 1} items</td>
-                        <td><strong>${order.total}</strong></td>
+                        <td><strong>₹{order.total}</strong></td>
                         <td>
                           <span className={`badge ${
                             order.status === 'completed' ? 'bg-success' :

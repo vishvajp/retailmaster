@@ -98,7 +98,7 @@ export default function AdminDashboard() {
           <div className="col-md-3 mb-3">
             <StatsCard
               title="Total Revenue"
-              value={`$${stats?.totalRevenue || "0.00"}`}
+              value={`₹${stats?.totalRevenue || "0.00"}`}
               icon="fas fa-dollar-sign"
               variant="success"
             />
@@ -155,7 +155,7 @@ export default function AdminDashboard() {
                             <td>
                               <span className="badge bg-secondary">{order.shopName}</span>
                             </td>
-                            <td><strong>${order.total}</strong></td>
+                            <td><strong>₹{order.total}</strong></td>
                             <td>
                               <span className={`badge ${
                                 order.status === 'completed' ? 'bg-success' :
