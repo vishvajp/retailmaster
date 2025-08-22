@@ -10,11 +10,9 @@ export default function Customers() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const { data: customers = [], isLoading } = useQuery({
-    queryKey: ["/api/customers", searchQuery],
-    queryFn: () => 
-      searchQuery 
-        ? fetch(`/api/customers/search?q=${encodeURIComponent(searchQuery)}`).then(res => res.json())
-        : fetch("/api/customers").then(res => res.json())
+    queryKey: searchQuery 
+      ? ["/api/customers/search?q=" + encodeURIComponent(searchQuery)]
+      : ["/api/customers"],
   });
 
   const { data: customerPurchases = {} } = useQuery({

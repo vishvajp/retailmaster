@@ -28,11 +28,7 @@ export default function Billing() {
   });
 
   const { data: customers = [] } = useQuery({
-    queryKey: ["/api/customers/search", customerSearch],
-    queryFn: () => 
-      customerSearch 
-        ? fetch(`/api/customers/search?q=${encodeURIComponent(customerSearch)}`).then(res => res.json())
-        : Promise.resolve([]),
+    queryKey: ["/api/customers/search?q=" + encodeURIComponent(customerSearch)],
     enabled: customerSearch.length > 0
   });
 
