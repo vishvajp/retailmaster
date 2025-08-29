@@ -99,6 +99,12 @@ function Router() {
       </Route>
       
       {/* Shopkeeper routes */}
+      <Route path="/shopkeeper">
+        <ProtectedRoute requiredRole="shopkeeper">
+          <ShopkeeperDashboard />
+        </ProtectedRoute>
+      </Route>
+      
       <Route path="/shopkeeper/dashboard">
         <ProtectedRoute requiredRole="shopkeeper">
           <ShopkeeperDashboard />
@@ -156,6 +162,24 @@ function Router() {
       <Route path="/shopkeeper/reports">
         <ProtectedRoute requiredRole="shopkeeper">
           <ShopkeeperReports />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/shopkeeper/categories">
+        <ProtectedRoute requiredRole="shopkeeper">
+          <StockAlerts />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/shopkeeper/sales">
+        <ProtectedRoute requiredRole="shopkeeper">
+          <ShopkeeperReports />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/shopkeeper/settings">
+        <ProtectedRoute requiredRole="shopkeeper">
+          <ShopkeeperDashboard />
         </ProtectedRoute>
       </Route>
       
