@@ -18,6 +18,7 @@ export default function UserManagement() {
     password: "",
     role: "shopkeeper",
     phone: "",
+    username: "",
   });
 
   const { data: users = [], isLoading } = useQuery({
@@ -66,6 +67,7 @@ export default function UserManagement() {
       password: "",
       role: "shopkeeper",
       phone: "",
+      username: "",
     });
     setShowAddForm(false);
     setEditingUser(null);
@@ -79,6 +81,7 @@ export default function UserManagement() {
       password: "", // Don't populate password for security
       role: user.role,
       phone: user.phone || "",
+      username: user.username || "",
     });
     setShowAddForm(true);
   };
@@ -139,6 +142,20 @@ export default function UserManagement() {
                     />
                   </div>
                   <div className="col-md-6 mb-3">
+                    <Label htmlFor="username">Username *</Label>
+                    <Input
+                      id="username"
+                      type="text"
+                      placeholder="Enter username"
+                      value={formData.username}
+                      onChange={(e) => handleInputChange('username', e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="row">
+                  <div className="col-md-6 mb-3">
                     <Label htmlFor="email">Email *</Label>
                     <Input
                       id="email"
@@ -149,9 +166,6 @@ export default function UserManagement() {
                       required
                     />
                   </div>
-                </div>
-
-                <div className="row">
                   <div className="col-md-6 mb-3">
                     <Label htmlFor="password">Password *</Label>
                     <Input
@@ -163,6 +177,9 @@ export default function UserManagement() {
                       required
                     />
                   </div>
+                </div>
+
+                <div className="row">
                   <div className="col-md-6 mb-3">
                     <Label htmlFor="role">Role *</Label>
                     <select
@@ -176,18 +193,18 @@ export default function UserManagement() {
                       <option value="admin">Admin</option>
                     </select>
                   </div>
+                  <div className="col-md-6 mb-3">
+                    <Label htmlFor="phone">Phone</Label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      placeholder="Phone number"
+                      value={formData.phone}
+                      onChange={(e) => handleInputChange('phone', e.target.value)}
+                    />
+                  </div>
                 </div>
 
-                <div className="mb-4">
-                  <Label htmlFor="phone">Phone</Label>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    placeholder="Phone number"
-                    value={formData.phone}
-                    onChange={(e) => handleInputChange('phone', e.target.value)}
-                  />
-                </div>
 
                 <div className="d-flex gap-2">
                   <Button
@@ -223,6 +240,7 @@ export default function UserManagement() {
                   <thead className="table-light">
                     <tr>
                       <th>Name</th>
+                      <th>Username</th>
                       <th>Email</th>
                       <th>Role</th>
                       <th>Phone</th>
@@ -243,6 +261,7 @@ export default function UserManagement() {
                             <strong>{user.name}</strong>
                           </div>
                         </td>
+                        <td>{user.username}</td>
                         <td>{user.email}</td>
                         <td>
                           <span className={`badge ${user.role === 'admin' ? 'bg-danger' : 'bg-success'}`}>
@@ -281,7 +300,7 @@ export default function UserManagement() {
                     ))}
                     {users.length === 0 && (
                       <tr>
-                        <td colSpan={7} className="text-center text-muted py-4">
+                        <td colSpan={8} className="text-center text-muted py-4">
                           No users found
                         </td>
                       </tr>
