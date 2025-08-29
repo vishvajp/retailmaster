@@ -111,7 +111,7 @@ function Router() {
         </ProtectedRoute>
       </Route>
       
-      <Route path="/shopkeeper/bills">
+      <Route path="/shopkeeper/bill-history">
         <ProtectedRoute requiredRole="shopkeeper">
           <BillHistory />
         </ProtectedRoute>
