@@ -1,6 +1,14 @@
 import Sidebar from "./Sidebar";
+import { useQuery } from "@tanstack/react-query";
 
 export default function ShopkeeperSidebar() {
+  // Fetch shopkeeper's shops to get the correct shop name
+  const { data: shops = [] } = useQuery({
+    queryKey: ["/api/shops"],
+  });
+  
+  // Get the first shop (shopkeeper should only have one shop)
+  const shopInfo = shops.length > 0 ? shops[0] : null;
   const sidebarItems = [
     {
       href: "/shopkeeper",
@@ -52,7 +60,7 @@ export default function ShopkeeperSidebar() {
   return (
     <Sidebar
       title="My Shop"
-      subtitle="Fresh Dairy Shop"
+      subtitle={shopInfo ? shopInfo.name : "My Shop"}
       items={sidebarItems}
     />
   );
