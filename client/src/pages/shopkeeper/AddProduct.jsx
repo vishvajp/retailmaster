@@ -25,7 +25,6 @@ export default function AddProduct() {
     // Stock & Unit
     stock: "",
     unit: "Piece",
-    quantity: "",
     reorderLevel: "5",
     
     // Pricing
@@ -66,28 +65,6 @@ export default function AddProduct() {
 
   // Define unit options
   const unitOptions = ["Gram", "Kg", "Packet", "Box", "Litre", "ml", "Piece"];
-
-  // Define quantity options based on unit
-  const getQuantityOptions = (unit) => {
-    switch (unit) {
-      case "Gram":
-        return ["50g", "100g", "200g", "250g", "500g", "750g"];
-      case "Kg":
-        return ["0.5kg", "1kg", "1.5kg", "2kg", "5kg", "10kg"];
-      case "Packet":
-        return ["1 packet", "2 packets", "5 packets", "10 packets"];
-      case "Box":
-        return ["1 box", "2 boxes", "5 boxes", "10 boxes"];
-      case "Litre":
-        return ["0.5L", "1L", "1.5L", "2L", "5L"];
-      case "ml":
-        return ["100ml", "200ml", "250ml", "500ml", "750ml", "1000ml"];
-      case "Piece":
-        return ["1 piece", "2 pieces", "5 pieces", "10 pieces", "12 pieces", "24 pieces"];
-      default:
-        return [];
-    }
-  };
 
   const createProductMutation = useMutation({
     mutationFn: async (productData) => {
@@ -285,40 +262,19 @@ export default function AddProduct() {
                     />
                   </div>
 
-                  <div className="row">
-                    <div className="col-md-6 mb-3">
-                      <Label htmlFor="unit">Unit *</Label>
-                      <select 
-                        id="unit"
-                        className="form-select"
-                        value={formData.unit}
-                        onChange={(e) => {
-                          handleInputChange('unit', e.target.value);
-                          handleInputChange('quantity', ''); // Reset quantity when unit changes
-                        }}
-                        data-testid="select-unit"
-                      >
-                        {unitOptions.map((unit) => (
-                          <option key={unit} value={unit}>{unit}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="col-md-6 mb-3">
-                      <Label htmlFor="quantity">Quantity *</Label>
-                      <select 
-                        id="quantity"
-                        className="form-select"
-                        value={formData.quantity}
-                        onChange={(e) => handleInputChange('quantity', e.target.value)}
-                        data-testid="select-quantity"
-                        required
-                      >
-                        <option value="">Select quantity</option>
-                        {getQuantityOptions(formData.unit).map((qty) => (
-                          <option key={qty} value={qty}>{qty}</option>
-                        ))}
-                      </select>
-                    </div>
+                  <div className="mb-3">
+                    <Label htmlFor="unit">Unit *</Label>
+                    <select 
+                      id="unit"
+                      className="form-select"
+                      value={formData.unit}
+                      onChange={(e) => handleInputChange('unit', e.target.value)}
+                      data-testid="select-unit"
+                    >
+                      {unitOptions.map((unit) => (
+                        <option key={unit} value={unit}>{unit}</option>
+                      ))}
+                    </select>
                   </div>
 
                   <div className="mb-3">
