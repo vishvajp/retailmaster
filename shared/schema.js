@@ -43,7 +43,8 @@ export const products = pgTable("products", {
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
   stock: integer("stock").notNull().default(0),
   minStock: integer("min_stock").notNull().default(5),
-  unit: text("unit").notNull(), // 'pieces', 'kg', 'liters', etc.
+  unit: text("unit").notNull(), // 'Gram', 'Kg', 'Packet', 'Box', 'Litre', 'ml', 'Piece'
+  quantity: text("quantity"), // '100g', '200g', '1kg', '500ml', etc.
   brand: text("brand"),
   imageUrl: text("image_url"),
   categoryId: integer("category_id").references(() => categories.id),
