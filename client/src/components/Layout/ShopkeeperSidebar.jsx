@@ -28,9 +28,14 @@ export default function ShopkeeperSidebar() {
       label: "Stock Management",
     },
     {
-      href: "/shopkeeper/orders",
-      icon: "fas fa-shopping-cart",
-      label: "Orders",
+      href: "/shopkeeper/billing",
+      icon: "fas fa-receipt",
+      label: "Billing",
+    },
+    {
+      href: "/shopkeeper/bill-history",
+      icon: "fas fa-history",
+      label: "Bill History",
     },
     {
       href: "/shopkeeper/sales",
