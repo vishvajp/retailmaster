@@ -118,6 +118,46 @@ export async function registerRoutes(app) {
     }
   });
 
+  app.put("/api/users/:id", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const userData = insertUserSchema.partial().parse(req.body);
+      
+      // Don't allow updating the admin user's role or critical info
+      const existingUser = await storage.getUser(id);
+      if (!existingUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      const updatedUser = await storage.updateUser(id, userData);
+      const { password, ...sanitizedUser } = updatedUser;
+      res.json(sanitizedUser);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid user data" });
+    }
+  });
+
+  app.delete("/api/users/:id", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      
+      // Prevent deleting the admin user
+      const userToDelete = await storage.getUser(id);
+      if (!userToDelete) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      if (userToDelete.role === 'admin') {
+        return res.status(400).json({ message: "Cannot delete admin user" });
+      }
+      
+      await storage.deleteUser(id);
+      res.json({ message: "User deleted successfully" });
+    } catch (error) {
+      res.status(400).json({ message: "Failed to delete user" });
+    }
+  });
+
   // Shop management routes
   app.get("/api/shops", authenticateToken, async (req, res) => {
     try {

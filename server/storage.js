@@ -186,6 +186,10 @@ export class MemStorage {
     return updatedUser;
   }
 
+  async deleteUser(id) {
+    return this.users.delete(id);
+  }
+
   async getAllUsers() {
     return Array.from(this.users.values());
   }

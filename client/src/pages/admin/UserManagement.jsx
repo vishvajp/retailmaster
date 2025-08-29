@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 export default function UserManagement() {
   const { toast } = useToast();
   const [showAddForm, setShowAddForm] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -35,6 +36,29 @@ export default function UserManagement() {
     },
   });
 
+  const updateUserMutation = useMutation({
+    mutationFn: ({ id, userData }) => apiRequest("PUT", `/api/users/${id}`, userData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/users"] });
+      toast({ title: "Success", description: "User updated successfully!" });
+      resetForm();
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to update user", variant: "destructive" });
+    },
+  });
+
+  const deleteUserMutation = useMutation({
+    mutationFn: (userId) => apiRequest("DELETE", `/api/users/${userId}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/users"] });
+      toast({ title: "Success", description: "User deleted successfully!" });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to delete user", variant: "destructive" });
+    },
+  });
+
   const resetForm = () => {
     setFormData({
       name: "",
@@ -44,11 +68,34 @@ export default function UserManagement() {
       phone: "",
     });
     setShowAddForm(false);
+    setEditingUser(null);
+  };
+
+  const handleEdit = (user) => {
+    setEditingUser(user);
+    setFormData({
+      name: user.name,
+      email: user.email,
+      password: "", // Don't populate password for security
+      role: user.role,
+      phone: user.phone || "",
+    });
+    setShowAddForm(true);
+  };
+
+  const handleDelete = (userId) => {
+    if (window.confirm("Are you sure you want to delete this user? This action cannot be undone.")) {
+      deleteUserMutation.mutate(userId);
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    createUserMutation.mutate(formData);
+    if (editingUser) {
+      updateUserMutation.mutate({ id: editingUser.id, userData: formData });
+    } else {
+      createUserMutation.mutate(formData);
+    }
   };
 
   const handleInputChange = (field, value) => {
@@ -71,7 +118,7 @@ export default function UserManagement() {
           <Card className="mb-4">
             <CardHeader>
               <div className="d-flex justify-content-between align-items-center">
-                <h5 className="fw-bold mb-0">Add New User</h5>
+                <h5 className="fw-bold mb-0">{editingUser ? 'Edit User' : 'Add New User'}</h5>
                 <Button variant="outline" size="sm" onClick={resetForm}>
                   <i className="fas fa-times"></i>
                 </Button>
@@ -145,10 +192,10 @@ export default function UserManagement() {
                 <div className="d-flex gap-2">
                   <Button
                     type="submit"
-                    disabled={createUserMutation.isPending}
+                    disabled={createUserMutation.isPending || updateUserMutation.isPending}
                     className="btn-primary"
                   >
-                    Create User
+                    {editingUser ? 'Update User' : 'Create User'}
                   </Button>
                   <Button type="button" variant="outline" onClick={resetForm}>
                     Cancel
@@ -210,10 +257,23 @@ export default function UserManagement() {
                         </td>
                         <td>{new Date(user.createdAt).toLocaleDateString()}</td>
                         <td>
-                          <Button size="sm" variant="outline" className="me-2">
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="me-2"
+                            onClick={() => handleEdit(user)}
+                            data-testid={`button-edit-${user.id}`}
+                          >
                             <i className="fas fa-edit"></i>
                           </Button>
-                          <Button size="sm" variant="outline" className="text-danger">
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="text-danger"
+                            onClick={() => handleDelete(user.id)}
+                            disabled={deleteUserMutation.isPending}
+                            data-testid={`button-delete-${user.id}`}
+                          >
                             <i className="fas fa-trash"></i>
                           </Button>
                         </td>
