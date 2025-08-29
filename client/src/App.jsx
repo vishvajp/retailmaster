@@ -38,6 +38,12 @@ function Router() {
       </Route>
       
       {/* Admin routes */}
+      <Route path="/admin">
+        <ProtectedRoute requiredRole="admin">
+          <AdminDashboard />
+        </ProtectedRoute>
+      </Route>
+      
       <Route path="/admin/dashboard">
         <ProtectedRoute requiredRole="admin">
           <AdminDashboard />
@@ -71,6 +77,24 @@ function Router() {
       <Route path="/admin/reports">
         <ProtectedRoute requiredRole="admin">
           <Reports />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/admin/products">
+        <ProtectedRoute requiredRole="admin">
+          <StockManagement />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/admin/categories">
+        <ProtectedRoute requiredRole="admin">
+          <ManageShops />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/admin/settings">
+        <ProtectedRoute requiredRole="admin">
+          <UserManagement />
         </ProtectedRoute>
       </Route>
       
