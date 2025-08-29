@@ -17,7 +17,7 @@ export default function ManageShops() {
     address: "",
     phone: "",
     email: "",
-    ownerId: 1, // This should be dynamically set
+    ownerId: "", // Will be selected from shopkeeper users
   });
 
   const { toast } = useToast();
@@ -25,6 +25,13 @@ export default function ManageShops() {
   const { data: shops = [], isLoading } = useQuery({
     queryKey: ["/api/shops"],
   });
+
+  const { data: users = [] } = useQuery({
+    queryKey: ["/api/users"],
+  });
+
+  // Filter shopkeeper users for selection
+  const shopkeepers = users.filter(user => user.role === 'shopkeeper');
 
   const createShopMutation = useMutation({
     mutationFn: async (shopData) => {
@@ -39,7 +46,7 @@ export default function ManageShops() {
         address: "",
         phone: "",
         email: "",
-        ownerId: 1,
+        ownerId: "",
       });
       toast({
         title: "Success",
@@ -155,6 +162,26 @@ export default function ManageShops() {
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       required
                     />
+                  </div>
+                </div>
+                
+                <div className="row mb-3">
+                  <div className="col-md-6">
+                    <Label htmlFor="shopOwner">Assign to Shopkeeper</Label>
+                    <select 
+                      className="form-select" 
+                      id="shopOwner"
+                      value={formData.ownerId}
+                      onChange={(e) => setFormData({ ...formData, ownerId: parseInt(e.target.value) })}
+                      required
+                    >
+                      <option value="">Select shopkeeper</option>
+                      {shopkeepers.map(user => (
+                        <option key={user.id} value={user.id}>
+                          {user.name} ({user.email})
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
                 
