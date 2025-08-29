@@ -58,7 +58,7 @@ export default function ShopkeeperDashboard() {
             )}
             <div>
               <h2 className="fw-bold">Dashboard</h2>
-              <p className="text-muted mb-0">{shopInfo ? `${shopInfo.name} - Daily Overview` : 'Fresh Dairy Shop - Daily Overview'}</p>
+              <p className="text-muted mb-0">{shopInfo ? `${shopInfo.name} - Daily Overview` : 'Loading Shop Information...'}</p>
             </div>
           </div>
           <div>
