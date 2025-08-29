@@ -1,6 +1,6 @@
+import React, { useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocation } from "wouter";
-import { useEffect } from "react";
 
 export default function ProtectedRoute({ children, requireRole }) {
   const { user, isLoading } = useAuth();
