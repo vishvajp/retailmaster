@@ -379,7 +379,7 @@ export default function AddProduct() {
                 <CardHeader className="bg-info text-white">
                   <h5 className="fw-bold mb-0">
                     <i className="fas fa-star me-2"></i>
-                    🔹 Optional but Useful
+                    🔹 Optional
                   </h5>
                 </CardHeader>
                 <CardContent className="pt-3">
