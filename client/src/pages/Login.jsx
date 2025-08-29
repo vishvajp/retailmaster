@@ -8,8 +8,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Login() {
-  const [email, setEmail] = useState("admin@shopmanager.com");
-  const [password, setPassword] = useState("admin123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [role, setRole] = useState("admin");
   const [isLoading, setIsLoading] = useState(false);
   
@@ -17,15 +17,9 @@ export default function Login() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
 
-  const updateDemoCredentials = (selectedRole) => {
+  const handleRoleChange = (selectedRole) => {
     setRole(selectedRole);
-    if (selectedRole === "admin") {
-      setEmail("admin@shopmanager.com");
-      setPassword("admin123");
-    } else {
-      setEmail("shop@dairy.com");
-      setPassword("shop123");
-    }
+    // Don't auto-fill credentials anymore - let users enter their own
   };
 
   const handleSubmit = async (e) => {
@@ -108,7 +102,7 @@ export default function Login() {
                       className="form-select" 
                       id="role" 
                       value={role}
-                      onChange={(e) => updateDemoCredentials(e.target.value)}
+                      onChange={(e) => handleRoleChange(e.target.value)}
                     >
                       <option value="admin">Admin</option>
                       <option value="shopkeeper">Shopkeeper</option>
@@ -138,7 +132,8 @@ export default function Login() {
                   <h6 className="fw-bold mb-2">Demo Credentials:</h6>
                   <small className="text-muted">
                     <strong>Admin:</strong> admin@shopmanager.com / admin123<br />
-                    <strong>Shopkeeper:</strong> shop@dairy.com / shop123
+                    <strong>Fresh Dairy Shop:</strong> shop@dairy.com / shop123<br />
+                    <strong>Game Shop:</strong> check@gmail.com / Check@123
                   </small>
                 </div>
               </CardContent>
