@@ -167,7 +167,7 @@ function Router() {
       
       <Route path="/shopkeeper/categories">
         <ProtectedRoute requiredRole="shopkeeper">
-          <StockAlerts />
+          <Products />
         </ProtectedRoute>
       </Route>
       
