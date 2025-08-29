@@ -28,6 +28,8 @@ import Billing from "@/pages/shopkeeper/Billing.jsx";
 import BillHistory from "@/pages/shopkeeper/BillHistory.jsx";
 import Customers from "@/pages/shopkeeper/Customers.jsx";
 import AddCustomer from "@/pages/shopkeeper/AddCustomer.jsx";
+import Categories from "@/pages/shopkeeper/Categories.jsx";
+import AddCategory from "@/pages/shopkeeper/AddCategory.jsx";
 
 function Router() {
   return (
@@ -167,7 +169,13 @@ function Router() {
       
       <Route path="/shopkeeper/categories">
         <ProtectedRoute requiredRole="shopkeeper">
-          <Products />
+          <Categories />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/shopkeeper/add-category">
+        <ProtectedRoute requiredRole="shopkeeper">
+          <AddCategory />
         </ProtectedRoute>
       </Route>
       

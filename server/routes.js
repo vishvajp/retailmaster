@@ -1,7 +1,7 @@
 import { createServer } from "http";
 import jwt from "jsonwebtoken";
 import { storage } from "./storage.js";
-import { loginSchema, insertUserSchema, insertShopSchema, insertProductSchema, insertOrderSchema } from "../shared/schema.js";
+import { loginSchema, insertUserSchema, insertShopSchema, insertCategorySchema, insertProductSchema, insertOrderSchema } from "../shared/schema.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "shop-management-secret-key";
 
@@ -217,6 +217,29 @@ export async function registerRoutes(app) {
       res.json(categories);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch categories" });
+    }
+  });
+
+  app.post("/api/categories", authenticateToken, async (req, res) => {
+    try {
+      const categoryData = insertCategorySchema.parse(req.body);
+      const category = await storage.createCategory(categoryData);
+      res.status(201).json(category);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid category data" });
+    }
+  });
+
+  app.delete("/api/categories/:id", authenticateToken, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const deleted = await storage.deleteCategory(id);
+      if (!deleted) {
+        return res.status(404).json({ message: "Category not found" });
+      }
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete category" });
     }
   });
 
