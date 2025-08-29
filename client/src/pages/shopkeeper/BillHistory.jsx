@@ -9,18 +9,33 @@ import { Badge } from "@/components/ui/badge";
 
 export default function BillHistory() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
 
   // Fetch bills for the shop
   const { data: bills = [], isLoading } = useQuery({
     queryKey: ["/api/bills"],
   });
 
-  // Filter bills based on search term
-  const filteredBills = bills.filter(bill => 
-    bill.billNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    bill.customer?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    bill.customer?.phone?.includes(searchTerm)
-  );
+  // Filter bills based on search term and date range
+  const filteredBills = bills.filter(bill => {
+    // Text search filter
+    const matchesSearch = !searchTerm || 
+      bill.billNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      bill.customer?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      bill.customer?.phone?.includes(searchTerm);
+
+    // Date range filter
+    const billDate = new Date(bill.createdAt);
+    const fromDateObj = fromDate ? new Date(fromDate) : null;
+    const toDateObj = toDate ? new Date(toDate + 'T23:59:59') : null; // Include end of day
+
+    const matchesDateRange = 
+      (!fromDateObj || billDate >= fromDateObj) &&
+      (!toDateObj || billDate <= toDateObj);
+
+    return matchesSearch && matchesDateRange;
+  });
 
   const printBill = (bill) => {
     // Create a new window for printing
@@ -118,14 +133,14 @@ export default function BillHistory() {
           </Badge>
         </div>
 
-        {/* Search Section */}
+        {/* Search and Filter Section */}
         <Card className="mb-4">
           <CardHeader>
-            <h5 className="fw-bold mb-0">Search Bills</h5>
+            <h5 className="fw-bold mb-0">Search & Filter Bills</h5>
           </CardHeader>
           <CardContent>
             <div className="row">
-              <div className="col-md-6">
+              <div className="col-md-6 mb-3">
                 <Label htmlFor="searchBill">Search by Bill Number, Customer Name or Phone</Label>
                 <Input
                   id="searchBill"
@@ -135,6 +150,43 @@ export default function BillHistory() {
                   placeholder="Enter bill number, customer name or phone..."
                   data-testid="input-search-bills"
                 />
+              </div>
+              <div className="col-md-3 mb-3">
+                <Label htmlFor="fromDate">From Date</Label>
+                <Input
+                  id="fromDate"
+                  type="date"
+                  value={fromDate}
+                  onChange={(e) => setFromDate(e.target.value)}
+                  data-testid="input-from-date"
+                />
+              </div>
+              <div className="col-md-3 mb-3">
+                <Label htmlFor="toDate">To Date</Label>
+                <Input
+                  id="toDate"
+                  type="date"
+                  value={toDate}
+                  onChange={(e) => setToDate(e.target.value)}
+                  data-testid="input-to-date"
+                />
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-12">
+                <Button
+                  onClick={() => {
+                    setSearchTerm("");
+                    setFromDate("");
+                    setToDate("");
+                  }}
+                  variant="outline"
+                  size="sm"
+                  data-testid="button-clear-filters"
+                >
+                  <i className="fas fa-times me-1"></i>
+                  Clear Filters
+                </Button>
               </div>
             </div>
           </CardContent>
