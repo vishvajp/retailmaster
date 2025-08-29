@@ -15,16 +15,35 @@ export default function AddProduct() {
   const { toast } = useToast();
   
   const [formData, setFormData] = useState({
+    // Basic Product Info
     name: "",
     sku: "",
+    categoryId: "",
+    brand: "",
     description: "",
-    price: "",
+    
+    // Stock & Unit
     stock: "",
-    minStock: "5",
     unit: "Piece",
     quantity: "",
-    brand: "",
-    categoryId: "",
+    reorderLevel: "5",
+    
+    // Pricing
+    purchasePrice: "",
+    sellingPrice: "",
+    tax: "0",
+    discount: "0",
+    flatDiscount: "0",
+    
+    // Optional Fields
+    imageUrl: "",
+    barcode: "",
+    qrCode: "",
+    expiryDate: "",
+    manufacturingDate: "",
+    supplierName: "",
+    supplierContact: "",
+    
     shopId: 1, // This should be dynamically set based on the shopkeeper's shop
   });
 
@@ -74,12 +93,19 @@ export default function AddProduct() {
     mutationFn: async (productData) => {
       return apiRequest("POST", "/api/products", {
         ...productData,
-        price: parseFloat(productData.price).toString(),
+        purchasePrice: productData.purchasePrice ? parseFloat(productData.purchasePrice).toString() : null,
+        sellingPrice: parseFloat(productData.sellingPrice).toString(),
+        price: parseFloat(productData.sellingPrice).toString(), // Legacy compatibility
+        tax: parseFloat(productData.tax || 0).toString(),
+        discount: parseFloat(productData.discount || 0).toString(),
+        flatDiscount: parseFloat(productData.flatDiscount || 0).toString(),
         stock: parseInt(productData.stock),
-        minStock: parseInt(productData.minStock),
+        reorderLevel: parseInt(productData.reorderLevel),
+        minStock: parseInt(productData.reorderLevel), // Legacy compatibility
         categoryId: parseInt(productData.categoryId) || null,
         shopId: parseInt(productData.shopId),
-        quantity: productData.quantity,
+        expiryDate: productData.expiryDate || null,
+        manufacturingDate: productData.manufacturingDate || null,
       });
     },
     onSuccess: () => {
@@ -101,6 +127,14 @@ export default function AddProduct() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!formData.sellingPrice) {
+      toast({
+        title: "Error",
+        description: "Selling price is required",
+        variant: "destructive",
+      });
+      return;
+    }
     createProductMutation.mutate(formData);
   };
 
@@ -116,154 +150,67 @@ export default function AddProduct() {
         <div className="d-flex justify-content-between align-items-center mb-4">
           <div>
             <h2 className="fw-bold">Add New Product</h2>
-            <p className="text-muted mb-0">Add a new product to your shop inventory</p>
+            <p className="text-muted mb-0">Create a comprehensive product listing with all details</p>
           </div>
           <Button 
             variant="outline" 
             onClick={() => setLocation("/shopkeeper/products")}
+            data-testid="button-back-to-products"
           >
             <i className="fas fa-arrow-left me-2"></i>Back to Products
           </Button>
         </div>
 
-        <div className="row">
-          <div className="col-lg-8 mx-auto">
-            <Card>
-              <CardHeader>
-                <h5 className="fw-bold mb-0">Product Information</h5>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSubmit}>
-                  <div className="row">
-                    <div className="col-md-6 mb-3">
-                      <Label htmlFor="name">Product Name *</Label>
-                      <Input
-                        id="name"
-                        type="text"
-                        placeholder="Enter product name"
-                        value={formData.name}
-                        onChange={(e) => handleInputChange('name', e.target.value)}
-                        required
-                      />
-                    </div>
-                    <div className="col-md-6 mb-3">
-                      <Label htmlFor="sku">SKU *</Label>
-                      <Input
-                        id="sku"
-                        type="text"
-                        placeholder="Product SKU"
-                        value={formData.sku}
-                        onChange={(e) => handleInputChange('sku', e.target.value)}
-                        required
-                      />
-                    </div>
-                  </div>
-
+        <form onSubmit={handleSubmit}>
+          <div className="row">
+            {/* Basic Product Info Section */}
+            <div className="col-lg-6 mb-4">
+              <Card>
+                <CardHeader className="bg-primary text-white">
+                  <h5 className="fw-bold mb-0">
+                    <i className="fas fa-info-circle me-2"></i>
+                    🔹 Basic Product Info
+                  </h5>
+                </CardHeader>
+                <CardContent className="pt-3">
                   <div className="mb-3">
-                    <Label htmlFor="description">Description</Label>
-                    <Textarea
-                      id="description"
-                      placeholder="Product description"
-                      value={formData.description}
-                      onChange={(e) => handleInputChange('description', e.target.value)}
-                      rows={3}
+                    <Label htmlFor="name">Product Name *</Label>
+                    <Input
+                      id="name"
+                      type="text"
+                      placeholder="e.g., Aachi Chicken Masala 100g"
+                      value={formData.name}
+                      onChange={(e) => handleInputChange('name', e.target.value)}
+                      required
+                      data-testid="input-product-name"
                     />
                   </div>
 
-                  <div className="row">
-                    <div className="col-md-4 mb-3">
-                      <Label htmlFor="price">Price * (₹)</Label>
-                      <Input
-                        id="price"
-                        type="number"
-                        step="0.01"
-                        placeholder="0.00"
-                        value={formData.price}
-                        onChange={(e) => handleInputChange('price', e.target.value)}
-                        required
-                      />
-                    </div>
-                    <div className="col-md-4 mb-3">
-                      <Label htmlFor="stock">Stock Quantity *</Label>
-                      <Input
-                        id="stock"
-                        type="number"
-                        placeholder="0"
-                        value={formData.stock}
-                        onChange={(e) => handleInputChange('stock', e.target.value)}
-                        required
-                      />
-                    </div>
-                    <div className="col-md-4 mb-3">
-                      <Label htmlFor="minStock">Minimum Stock</Label>
-                      <Input
-                        id="minStock"
-                        type="number"
-                        placeholder="5"
-                        value={formData.minStock}
-                        onChange={(e) => handleInputChange('minStock', e.target.value)}
-                      />
-                    </div>
+                  <div className="mb-3">
+                    <Label htmlFor="sku">SKU (Stock Keeping Unit) *</Label>
+                    <Input
+                      id="sku"
+                      type="text"
+                      placeholder="Unique code to identify the product"
+                      value={formData.sku}
+                      onChange={(e) => handleInputChange('sku', e.target.value)}
+                      required
+                      data-testid="input-sku"
+                    />
                   </div>
 
-                  <div className="row">
-                    <div className="col-md-4 mb-3">
-                      <Label htmlFor="unit">Unit *</Label>
-                      <select 
-                        id="unit"
-                        className="form-select"
-                        value={formData.unit}
-                        onChange={(e) => {
-                          handleInputChange('unit', e.target.value);
-                          handleInputChange('quantity', ''); // Reset quantity when unit changes
-                        }}
-                        data-testid="select-unit"
-                      >
-                        {unitOptions.map((unit) => (
-                          <option key={unit} value={unit}>{unit}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="col-md-4 mb-3">
-                      <Label htmlFor="quantity">Quantity *</Label>
-                      <select 
-                        id="quantity"
-                        className="form-select"
-                        value={formData.quantity}
-                        onChange={(e) => handleInputChange('quantity', e.target.value)}
-                        data-testid="select-quantity"
-                        required
-                      >
-                        <option value="">Select quantity</option>
-                        {getQuantityOptions(formData.unit).map((qty) => (
-                          <option key={qty} value={qty}>{qty}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="col-md-4 mb-3">
-                      <Label htmlFor="brand">Brand</Label>
-                      <Input
-                        id="brand"
-                        type="text"
-                        placeholder="Brand name"
-                        value={formData.brand}
-                        onChange={(e) => handleInputChange('brand', e.target.value)}
-                        data-testid="input-brand"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="mb-4">
-                    <Label htmlFor="categoryId">Category</Label>
+                  <div className="mb-3">
+                    <Label htmlFor="categoryId">Category *</Label>
                     <div className="d-flex gap-2">
                       <select
                         id="categoryId"
                         className="form-select"
                         value={formData.categoryId}
                         onChange={(e) => handleInputChange('categoryId', e.target.value)}
+                        required
                         data-testid="select-category"
                       >
-                        <option value="">Select a category</option>
+                        <option value="">Select a category (e.g., Spices, Groceries, Beverages)</option>
                         {filteredCategories.map((category) => (
                           <option key={category.id} value={category.id}>
                             {category.name}
@@ -286,39 +233,329 @@ export default function AddProduct() {
                         <i className="fas fa-refresh"></i>
                       </Button>
                     </div>
-                    <small className="text-muted">Showing categories for {shopInfo?.type || 'your'} shop type</small>
                   </div>
 
-                  <div className="d-flex gap-2">
+                  <div className="mb-3">
+                    <Label htmlFor="brand">Brand</Label>
+                    <Input
+                      id="brand"
+                      type="text"
+                      placeholder="e.g., Aachi, Nescafe (optional)"
+                      value={formData.brand}
+                      onChange={(e) => handleInputChange('brand', e.target.value)}
+                      data-testid="input-brand"
+                    />
+                  </div>
+
+                  <div className="mb-3">
+                    <Label htmlFor="description">Description</Label>
+                    <Textarea
+                      id="description"
+                      placeholder="Short details about the product (optional)"
+                      value={formData.description}
+                      onChange={(e) => handleInputChange('description', e.target.value)}
+                      rows={3}
+                      data-testid="input-description"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Stock & Unit Section */}
+            <div className="col-lg-6 mb-4">
+              <Card>
+                <CardHeader className="bg-success text-white">
+                  <h5 className="fw-bold mb-0">
+                    <i className="fas fa-boxes me-2"></i>
+                    🔹 Stock & Unit
+                  </h5>
+                </CardHeader>
+                <CardContent className="pt-3">
+                  <div className="mb-3">
+                    <Label htmlFor="stock">Stock Quantity *</Label>
+                    <Input
+                      id="stock"
+                      type="number"
+                      placeholder="How much is available (e.g., 10)"
+                      value={formData.stock}
+                      onChange={(e) => handleInputChange('stock', e.target.value)}
+                      required
+                      data-testid="input-stock"
+                    />
+                  </div>
+
+                  <div className="row">
+                    <div className="col-md-6 mb-3">
+                      <Label htmlFor="unit">Unit *</Label>
+                      <select 
+                        id="unit"
+                        className="form-select"
+                        value={formData.unit}
+                        onChange={(e) => {
+                          handleInputChange('unit', e.target.value);
+                          handleInputChange('quantity', ''); // Reset quantity when unit changes
+                        }}
+                        data-testid="select-unit"
+                      >
+                        {unitOptions.map((unit) => (
+                          <option key={unit} value={unit}>{unit}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="col-md-6 mb-3">
+                      <Label htmlFor="quantity">Quantity *</Label>
+                      <select 
+                        id="quantity"
+                        className="form-select"
+                        value={formData.quantity}
+                        onChange={(e) => handleInputChange('quantity', e.target.value)}
+                        data-testid="select-quantity"
+                        required
+                      >
+                        <option value="">Select quantity</option>
+                        {getQuantityOptions(formData.unit).map((qty) => (
+                          <option key={qty} value={qty}>{qty}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="mb-3">
+                    <Label htmlFor="reorderLevel">Reorder Level (Minimum Stock Alert) *</Label>
+                    <Input
+                      id="reorderLevel"
+                      type="number"
+                      placeholder="System alerts when stock falls below this"
+                      value={formData.reorderLevel}
+                      onChange={(e) => handleInputChange('reorderLevel', e.target.value)}
+                      required
+                      data-testid="input-reorder-level"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Pricing Section */}
+            <div className="col-lg-6 mb-4">
+              <Card>
+                <CardHeader className="bg-warning text-dark">
+                  <h5 className="fw-bold mb-0">
+                    <i className="fas fa-rupee-sign me-2"></i>
+                    🔹 Pricing
+                  </h5>
+                </CardHeader>
+                <CardContent className="pt-3">
+                  <div className="row">
+                    <div className="col-md-6 mb-3">
+                      <Label htmlFor="purchasePrice">Purchase Price (Cost Price)</Label>
+                      <Input
+                        id="purchasePrice"
+                        type="number"
+                        step="0.01"
+                        placeholder="What you bought it for"
+                        value={formData.purchasePrice}
+                        onChange={(e) => handleInputChange('purchasePrice', e.target.value)}
+                        data-testid="input-purchase-price"
+                      />
+                    </div>
+                    <div className="col-md-6 mb-3">
+                      <Label htmlFor="sellingPrice">Selling Price (MRP) *</Label>
+                      <Input
+                        id="sellingPrice"
+                        type="number"
+                        step="0.01"
+                        placeholder="What you sell it for"
+                        value={formData.sellingPrice}
+                        onChange={(e) => handleInputChange('sellingPrice', e.target.value)}
+                        required
+                        data-testid="input-selling-price"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="row">
+                    <div className="col-md-4 mb-3">
+                      <Label htmlFor="tax">Tax (GST/VAT %)</Label>
+                      <Input
+                        id="tax"
+                        type="number"
+                        step="0.01"
+                        placeholder="0"
+                        value={formData.tax}
+                        onChange={(e) => handleInputChange('tax', e.target.value)}
+                        data-testid="input-tax"
+                      />
+                    </div>
+                    <div className="col-md-4 mb-3">
+                      <Label htmlFor="discount">Discount (%)</Label>
+                      <Input
+                        id="discount"
+                        type="number"
+                        step="0.01"
+                        placeholder="0"
+                        value={formData.discount}
+                        onChange={(e) => handleInputChange('discount', e.target.value)}
+                        data-testid="input-discount"
+                      />
+                    </div>
+                    <div className="col-md-4 mb-3">
+                      <Label htmlFor="flatDiscount">Flat Discount (₹)</Label>
+                      <Input
+                        id="flatDiscount"
+                        type="number"
+                        step="0.01"
+                        placeholder="0"
+                        value={formData.flatDiscount}
+                        onChange={(e) => handleInputChange('flatDiscount', e.target.value)}
+                        data-testid="input-flat-discount"
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Optional but Useful Section */}
+            <div className="col-lg-6 mb-4">
+              <Card>
+                <CardHeader className="bg-info text-white">
+                  <h5 className="fw-bold mb-0">
+                    <i className="fas fa-star me-2"></i>
+                    🔹 Optional but Useful
+                  </h5>
+                </CardHeader>
+                <CardContent className="pt-3">
+                  <div className="mb-3">
+                    <Label htmlFor="imageUrl">Product Image URL</Label>
+                    <Input
+                      id="imageUrl"
+                      type="url"
+                      placeholder="For easy identification in POS screen"
+                      value={formData.imageUrl}
+                      onChange={(e) => handleInputChange('imageUrl', e.target.value)}
+                      data-testid="input-image-url"
+                    />
+                  </div>
+
+                  <div className="row">
+                    <div className="col-md-6 mb-3">
+                      <Label htmlFor="barcode">Barcode</Label>
+                      <Input
+                        id="barcode"
+                        type="text"
+                        placeholder="For barcode scanning support"
+                        value={formData.barcode}
+                        onChange={(e) => handleInputChange('barcode', e.target.value)}
+                        data-testid="input-barcode"
+                      />
+                    </div>
+                    <div className="col-md-6 mb-3">
+                      <Label htmlFor="qrCode">QR Code</Label>
+                      <Input
+                        id="qrCode"
+                        type="text"
+                        placeholder="QR code for quick access"
+                        value={formData.qrCode}
+                        onChange={(e) => handleInputChange('qrCode', e.target.value)}
+                        data-testid="input-qr-code"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="row">
+                    <div className="col-md-6 mb-3">
+                      <Label htmlFor="expiryDate">Expiry Date</Label>
+                      <Input
+                        id="expiryDate"
+                        type="date"
+                        value={formData.expiryDate}
+                        onChange={(e) => handleInputChange('expiryDate', e.target.value)}
+                        data-testid="input-expiry-date"
+                      />
+                      <small className="text-muted">Important for food/medicines</small>
+                    </div>
+                    <div className="col-md-6 mb-3">
+                      <Label htmlFor="manufacturingDate">Manufacturing Date</Label>
+                      <Input
+                        id="manufacturingDate"
+                        type="date"
+                        value={formData.manufacturingDate}
+                        onChange={(e) => handleInputChange('manufacturingDate', e.target.value)}
+                        data-testid="input-manufacturing-date"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="row">
+                    <div className="col-md-6 mb-3">
+                      <Label htmlFor="supplierName">Supplier/Vendor Name</Label>
+                      <Input
+                        id="supplierName"
+                        type="text"
+                        placeholder="Who you buy from"
+                        value={formData.supplierName}
+                        onChange={(e) => handleInputChange('supplierName', e.target.value)}
+                        data-testid="input-supplier-name"
+                      />
+                    </div>
+                    <div className="col-md-6 mb-3">
+                      <Label htmlFor="supplierContact">Supplier Contact</Label>
+                      <Input
+                        id="supplierContact"
+                        type="text"
+                        placeholder="Phone/Email of supplier"
+                        value={formData.supplierContact}
+                        onChange={(e) => handleInputChange('supplierContact', e.target.value)}
+                        data-testid="input-supplier-contact"
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
+          {/* Submit Section */}
+          <div className="row">
+            <div className="col-12">
+              <Card>
+                <CardContent className="text-center">
+                  <div className="d-flex gap-3 justify-content-center">
                     <Button
                       type="submit"
+                      size="lg"
                       disabled={createProductMutation.isPending}
                       className="btn-primary"
+                      data-testid="button-save-product"
                     >
                       {createProductMutation.isPending ? (
                         <>
                           <span className="spinner-border spinner-border-sm me-2" role="status"></span>
-                          Adding...
+                          Adding Product...
                         </>
                       ) : (
                         <>
-                          <i className="fas fa-plus me-2"></i>Add Product
+                          <i className="fas fa-save me-2"></i>Add Product to Inventory
                         </>
                       )}
                     </Button>
                     <Button
                       type="button"
                       variant="outline"
+                      size="lg"
                       onClick={() => setLocation("/shopkeeper/products")}
+                      data-testid="button-cancel"
                     >
-                      Cancel
+                      <i className="fas fa-times me-2"></i>Cancel
                     </Button>
                   </div>
-                </form>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );

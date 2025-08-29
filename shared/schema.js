@@ -40,13 +40,31 @@ export const products = pgTable("products", {
   name: text("name").notNull(),
   sku: text("sku").notNull().unique(),
   description: text("description"),
-  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  // Pricing
+  purchasePrice: decimal("purchase_price", { precision: 10, scale: 2 }), // Cost price
+  sellingPrice: decimal("selling_price", { precision: 10, scale: 2 }).notNull(), // MRP/Sale price
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(), // Legacy field for compatibility
+  tax: decimal("tax", { precision: 5, scale: 2 }).default("0"), // GST/VAT percentage
+  discount: decimal("discount", { precision: 5, scale: 2 }).default("0"), // Discount percentage
+  flatDiscount: decimal("flat_discount", { precision: 10, scale: 2 }).default("0"), // Flat discount amount
+  // Stock & Unit
   stock: integer("stock").notNull().default(0),
-  minStock: integer("min_stock").notNull().default(5),
+  reorderLevel: integer("reorder_level").notNull().default(5), // Minimum stock alert
+  minStock: integer("min_stock").notNull().default(5), // Legacy field for compatibility
   unit: text("unit").notNull(), // 'Gram', 'Kg', 'Packet', 'Box', 'Litre', 'ml', 'Piece'
   quantity: text("quantity"), // '100g', '200g', '1kg', '500ml', etc.
+  // Product Details
   brand: text("brand"),
   imageUrl: text("image_url"),
+  barcode: text("barcode"),
+  qrCode: text("qr_code"),
+  // Dates
+  expiryDate: timestamp("expiry_date"),
+  manufacturingDate: timestamp("manufacturing_date"),
+  // Supplier
+  supplierName: text("supplier_name"),
+  supplierContact: text("supplier_contact"),
+  // Relations
   categoryId: integer("category_id").references(() => categories.id),
   shopId: integer("shop_id").references(() => shops.id),
   isActive: boolean("is_active").notNull().default(true),
